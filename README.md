@@ -2,6 +2,17 @@
 
 Web-ohjelmoinnin sovellusprojekti. Sovellus tarjoaa elokuvaharrastajille palvelun, jossa käyttäjät voivat etsiä elokuvia, kirjoittaa arvosteluja, luoda suosikkilistoja sekä osallistua elokuvaryhmiin.
 
+Web-ohjelmoinnin sovellusprojekti  
+Oulun ammattikorkeakoulu  
+Syksy 2026
+
+## Tiimi
+
+- Jenni Seppälä
+- Aleksi Vesterinen
+- Arttu Peippo
+- Daniil Bagirov
+
 ## Teknologiat
 
 - React
@@ -18,7 +29,7 @@ Web-ohjelmoinnin sovellusprojekti. Sovellus tarjoaa elokuvaharrastajille palvelu
 - Elokuvien arvostelu ja arvioiden selaaminen
 - Suosikkilistojen luominen ja jakaminen
 - Ryhmien luominen ja hallinta
-- Responsiivinen käyttöliittymä 【1-c9da6f】
+- Responsiivinen käyttöliittymä 
 
 ## Projektin rakenne
 
@@ -35,18 +46,5 @@ Projektissa käytetään:
 
 - GitHub Projects kehitysjonon hallintaan
 - Git-versionhallintaa
-- Scrum-menetelmää sprinttien suunnitteluun ja seurantaan 【1-c9da6f】
+- Scrum-menetelmää sprinttien suunnitteluun ja seurantaan 
 
-
-## Tiimi
-
-- Jenni Seppälä
-- Aleksi Vesterinen
-- Arttu Peippo
-- Daniil Bagirov
-
-## Kurssi
-
-Web-ohjelmoinnin sovellusprojekti  
-Oulun ammattikorkeakoulu  
-Syksy 2026
