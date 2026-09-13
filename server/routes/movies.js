@@ -5,61 +5,38 @@ const router = express.Router();
 
 router.get('/search', async (req, res) => {
   try {
-    const query = req.query.q;
+    const { q, year, genre } = req.query;
 
-    const response = await axios.get(
-      'https://api.themoviedb.org/3/search/movie',
-      {
-        params: {
-          api_key: process.env.TMDB_API_KEY,
-          query
-        }
-      }
-    );
+    const params = {
+      api_key: process.env.TMDB_API_KEY
+    };
+
+    if (q) {
+      params.query = q;
+    }
+
+    if (year) {
+      params.year = year;
+    }
+
+    if (genre) {
+      params.with_genres = genre;
+    }
+
+    const endpoint =
+      q
+        ? 'https://api.themoviedb.org/3/search/movie'
+        : 'https://api.themoviedb.org/3/discover/movie';
+
+    const response = await axios.get(endpoint, {
+      params
+    });
 
     res.json(response.data.results);
+
   } catch (err) {
     console.error(err);
-    res.status(500).json({
-      error: 'TMDB virhe'
-    });
-  }
-});
 
-router.get('/now-playing', async (req, res) => {
-  try {
-    const response = await axios.get(
-      'https://api.themoviedb.org/3/movie/now_playing',
-      {
-        params: {
-          api_key: process.env.TMDB_API_KEY
-        }
-      }
-    );
-
-    res.json(response.data.results);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({
-      error: 'TMDB virhe'
-    });
-  }
-});
-
-router.get('/:id', async (req, res) => {
-  try {
-    const response = await axios.get(
-      `https://api.themoviedb.org/3/movie/${req.params.id}`,
-      {
-        params: {
-          api_key: process.env.TMDB_API_KEY
-        }
-      }
-    );
-
-    res.json(response.data);
-  } catch (err) {
-    console.error(err);
     res.status(500).json({
       error: 'TMDB virhe'
     });
