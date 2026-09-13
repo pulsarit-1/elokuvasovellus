@@ -17,9 +17,7 @@ Tietokanta mahdollistaa käyttäjien hallinnan, elokuvien arvostelut, suosikkili
 
 # ER-kaavio
 
-(Lisää tähän tietokantakaaviosta otettu kuva)
-
-![(tietokanta.png)]
+![Tietokantakaavio](tietokanta.png)
 
 ---
 
