@@ -29,3 +29,20 @@ app.get('/api/db-test', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Palvelin käynnissä portissa ${PORT}`);
 });
+
+app.get('/api/test-jwt', (req, res) => {
+  const jwt = require('jsonwebtoken');
+
+  const token = jwt.sign(
+    {
+      userId: 2,
+      email: 'testi@testi.fi'
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: '24h'
+    }
+  );
+
+  res.json({ token });
+});
