@@ -3,9 +3,8 @@ name: Build and deploy Node.js app to Azure Web App - Leffapiiri-api
 on:
   push:
     branches:
-      
-- main
-workflow_dispatch:
+      - main
+  workflow_dispatch:
 
 jobs:
   build:
@@ -14,29 +13,25 @@ jobs:
       contents: read #This is required for actions/checkout
 
     steps:
-      
-uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      
-name: Set up Node.js version
-      uses: actions/setup-node@v3
-      with:
-        node-version: '24.x'
+      - name: Set up Node.js version
+        uses: actions/setup-node@v3
+        with:
+          node-version: '24.x'
 
-      
-name: npm install, build, and test
-      working-directory: ./server
-      run: |
-        npm install
-        npm run build --if-present
-        npm run test --if-present
+      - name: npm install, build, and test
+        working-directory: ./server
+        run: |
+          npm install
+          npm run build --if-present
+          npm run test --if-present
 
-      
-name: Upload artifact for deployment job
-      uses: actions/upload-artifact@v4
-      with:
-        name: node-app
-        path: ./server
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: node-app
+          path: ./server
 
   deploy:
     runs-on: ubuntu-latest
@@ -48,24 +43,21 @@ name: Upload artifact for deployment job
       contents: read #This is required for actions/checkout
 
     steps:
-      
-name: Download artifact from build job
-      uses: actions/download-artifact@v4
-      with:
-        name: node-app
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: node-app
 
-      
-name: Login to Azure
-      uses: azure/login@v2
-      with:
-        client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_BBB3F18F0158459695AE20B126F270DF }}
-        tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_C76322D94AD94094B86C4363E17F76F0 }}
-        subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_44031F5529844CF58B167269636A15F1 }}
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_BBB3F18F0158459695AE20B126F270DF }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_C76322D94AD94094B86C4363E17F76F0 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_44031F5529844CF58B167269636A15F1 }}
 
-      
-name: 'Deploy to Azure Web App'
-      id: deploy-to-webapp
-      uses: azure/webapps-deploy@v3
-      with:
-        app-name: 'Leffapiiri-api'
-        slot-name: 'Production'
+      - name: 'Deploy to Azure Web App'
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'Leffapiiri-api'
+          slot-name: 'Production'
