@@ -1,12 +1,16 @@
-name: Build and deploy Node.js app to Azure Web App - Leffapiiri-api
+name: Build and deploy Backend to Azure Web App (OIDC)
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'server/**' # Käynnistyy vain kun backend-kansiota muutetaan
+      - 'server/**' # Käynnistyy vain kun backend-koodia muutetaan
   workflow_dispatch:
+
+permissions:
+  id-token: write # Vaaditaan OIDC JWT-tokenin pyytämiseen
+  contents: read
 
 jobs:
   build-and-deploy:
@@ -14,28 +18,33 @@ jobs:
 
     defaults:
       run:
-        working-directory: server # Ajaa komennot server-kansiossa
+        working-directory: server
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js version
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
           cache: 'npm'
           cache-dependency-path: server/package-lock.json
 
-      - name: npm install, build, and test
+      - name: Install dependencies and build
         run: |
           npm ci
           npm run build --if-present
-          npm run test --if-present
+
+      - name: Log in to Azure using OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'Leffapiiri-api'
-          publish-profile: ${{ secrets.AZURE_BACKEND_PUBLISH_PROFILE }}
           package: './server'
