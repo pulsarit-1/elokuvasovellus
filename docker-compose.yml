@@ -1,0 +1,17 @@
+services:
+  backend:
+    build: ./server
+    ports:
+      - "3001:3001"
+    env_file: ./server/.env
+    init: true
+
+  frontend:
+    build:
+      context: ./client
+      args:
+        VITE_API_URL: http://localhost:3001
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
