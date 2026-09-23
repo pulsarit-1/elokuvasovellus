@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import axios from 'axios';
+import './Auth.css';
 
-function Login() {
+function Login({ onSwitchToRegister, onBackHome }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
@@ -24,28 +26,64 @@ function Login() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Kirjaudu sisään</h2>
+    <div className="auth-page">
+      <button type="button" className="auth-back" onClick={onBackHome}>
+        ← Etusivulle
+      </button>
 
-      <input
-        type="email"
-        placeholder="Sähköposti"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
-      <input
-        type="password"
-        placeholder="Salasana"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-      />
+      <div className="auth-card">
+        <div className="auth-sprockets" aria-hidden="true" />
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+        <form className="auth-card-body" onSubmit={handleSubmit}>
+          <span className="auth-stub">LEFFAPIIRI</span>
+          <h2 className="auth-heading">Kirjaudu sisään</h2>
+          <p className="auth-subtext">Tervetuloa takaisin.</p>
 
-      <button type="submit">Kirjaudu</button>
-    </form>
+          <label className="auth-field">
+            <span className="auth-label">Sähköposti</span>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </label>
+
+          <label className="auth-field">
+            <span className="auth-label">Salasana</span>
+            <div className="auth-field-wrapper">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                className="auth-toggle-visibility"
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? 'Piilota salasana' : 'Näytä salasana'}
+              >
+                {showPassword ? '🙉' : '🙈'}
+              </button>
+            </div>
+          </label>
+
+          {error && <p className="auth-error">{error}</p>}
+
+          <button type="submit" className="auth-button">Kirjaudu</button>
+
+          <p className="auth-switch">
+            Ei vielä tiliä?{' '}
+            <button type="button" className="auth-link" onClick={onSwitchToRegister}>
+              Rekisteröidy
+            </button>
+          </p>
+        </form>
+
+        <div className="auth-sprockets" aria-hidden="true" />
+      </div>
+    </div>
   );
 }
 
