@@ -15,6 +15,7 @@ Syksy 2026
 
 ## Teknologiat
 
+- Azure
 - React
 - Node.js
 - PostgreSQL
