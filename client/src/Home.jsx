@@ -39,7 +39,7 @@ function MovieGrid({ movies }) {
   );
 }
 
-function Home({ onNavigateLogin }) {
+function Home({ onNavigateLogin, onNavigateSearch }) {
   return (
     <div>
       <header className="site-header">
@@ -52,7 +52,7 @@ function Home({ onNavigateLogin }) {
 
         <ul className="nav-links">
           <li><span className="active">Etusivu</span></li>
-          <li><span>Haku</span></li>
+          <li><span onClick={onNavigateSearch}>Haku</span></li>
           <li><span>Suosikit</span></li>
         </ul>
 
@@ -69,7 +69,7 @@ function Home({ onNavigateLogin }) {
           sopivat elokuvat leffaharrastajien yhteisöstä.
         </p>
         <div className="hero-actions">
-          <button type="button" className="btn btn-primary">Selaa elokuvia</button>
+          <button type="button" className="btn btn-primary" onClick={onNavigateSearch}>Selaa elokuvia</button>
           <button type="button" className="btn btn-outline">▶ Katso esittely</button>
         </div>
       </section>
