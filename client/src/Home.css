@@ -57,6 +57,19 @@
   margin-bottom: 12px;
 }
 
+.movie-poster-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius);
+}
+
+.movie-message {
+  color: var(--text-muted);
+}
+
 .movie-rating {
   position: absolute;
   top: 10px;

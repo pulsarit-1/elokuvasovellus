@@ -1,26 +1,15 @@
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 import './App.css';
 import './Home.css';
-
-const trending = [
-  { title: 'Kadonnut Horisontti', year: 2025, genre: 'Sci-Fi', rating: 8.4, gradient: 'gradient-1' },
-  { title: 'Yön Varjot', year: 2024, genre: 'Trilleri', rating: 7.9, gradient: 'gradient-2' },
-  { title: 'Punainen Kuu', year: 2023, genre: 'Rikos', rating: 9.1, gradient: 'gradient-3' },
-  { title: 'Hiljainen Kaupunki', year: 2025, genre: 'Draama', rating: 7.2, gradient: 'gradient-4' },
-  { title: 'Auringon Jälkeen', year: 2022, genre: 'Fantasia', rating: 8.0, gradient: 'gradient-5' },
-];
-
-const newest = [
-  { title: 'Musta Aalto', year: 2026, genre: 'Jännitys', rating: 6.8, gradient: 'gradient-2' },
-  { title: 'Kultainen Hetki', year: 2026, genre: 'Draama', rating: 8.6, gradient: 'gradient-5' },
-  { title: 'Talven Tarina', year: 2025, genre: 'Komedia', rating: 7.4, gradient: 'gradient-1' },
-  { title: 'Kaukainen Ranta', year: 2024, genre: 'Seikkailu', rating: 8.9, gradient: 'gradient-4' },
-  { title: 'Varjojen Maa', year: 2023, genre: 'Mysteeri', rating: 7.7, gradient: 'gradient-3' },
-];
 
 function MovieCard({ movie }) {
   return (
     <div className="movie-card">
-      <div className={`movie-poster ${movie.gradient}`}>
+      <div className="movie-poster gradient-1">
+        {movie.poster && (
+          <img className="movie-poster-img" src={movie.poster} alt={movie.title} />
+        )}
         <span className="movie-rating">★ {movie.rating}</span>
       </div>
       <div className="movie-title">{movie.title}</div>
@@ -29,17 +18,51 @@ function MovieCard({ movie }) {
   );
 }
 
-function MovieGrid({ movies }) {
+function MovieGrid({ movies, loading, error }) {
+  if (loading) {
+    return <p className="movie-message">Ladataan elokuvia...</p>;
+  }
+
+  if (error) {
+    return <p className="movie-message">{error}</p>;
+  }
+
   return (
     <div className="movie-grid">
       {movies.map((movie) => (
-        <MovieCard key={movie.title} movie={movie} />
+        <MovieCard key={movie.id} movie={movie} />
       ))}
     </div>
   );
 }
 
 function Home({ onNavigateLogin }) {
+  const [trending, setTrending] = useState([]);
+  const [newest, setNewest] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  // Haetaan elokuvat backendiltä kerran, kun etusivu avataan.
+  useEffect(() => {
+    async function fetchMovies() {
+      try {
+        const [trendingRes, newestRes] = await Promise.all([
+          axios.get(`${import.meta.env.VITE_API_URL}/api/movies/trending`),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/movies/now-playing`),
+        ]);
+        setTrending(trendingRes.data);
+        setNewest(newestRes.data);
+      } catch (err) {
+        console.error(err);
+        setError('Elokuvien lataaminen epäonnistui.');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchMovies();
+  }, []);
+
   return (
     <div>
       <header className="site-header">
@@ -79,7 +102,7 @@ function Home({ onNavigateLogin }) {
           <h2>Trendaavat elokuvat</h2>
           <span className="see-all">Näytä kaikki →</span>
         </div>
-        <MovieGrid movies={trending} />
+        <MovieGrid movies={trending} loading={loading} error={error} />
       </section>
 
       <section className="section">
@@ -87,7 +110,7 @@ function Home({ onNavigateLogin }) {
           <h2>Uusimmat lisäykset</h2>
           <span className="see-all">Näytä kaikki →</span>
         </div>
-        <MovieGrid movies={newest} />
+        <MovieGrid movies={newest} loading={loading} error={error} />
       </section>
 
       <footer className="site-footer">© 2026 Leffapiiri — rakennettu leffaharrastajille</footer>
