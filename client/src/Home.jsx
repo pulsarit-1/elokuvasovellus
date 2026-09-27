@@ -36,33 +36,7 @@ function MovieGrid({ movies, loading, error }) {
   );
 }
 
-function Home({ onNavigateLogin }) {
-  const [trending, setTrending] = useState([]);
-  const [newest, setNewest] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-
-  // Haetaan elokuvat backendiltä kerran, kun etusivu avataan.
-  useEffect(() => {
-    async function fetchMovies() {
-      try {
-        const [trendingRes, newestRes] = await Promise.all([
-          axios.get(`${import.meta.env.VITE_API_URL}/api/movies/trending`),
-          axios.get(`${import.meta.env.VITE_API_URL}/api/movies/now-playing`),
-        ]);
-        setTrending(trendingRes.data);
-        setNewest(newestRes.data);
-      } catch (err) {
-        console.error(err);
-        setError('Elokuvien lataaminen epäonnistui.');
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchMovies();
-  }, []);
-
+function Home({ onNavigateLogin, onNavigateSearch }) {
   return (
     <div>
       <header className="site-header">
@@ -75,8 +49,8 @@ function Home({ onNavigateLogin }) {
 
         <ul className="nav-links">
           <li><span className="active">Etusivu</span></li>
-          <li><span>Haku</span></li>
-          <li><span>Suosikit</span></li>
+          <li><span onClick={onNavigateSearch}>Haku</span></li>
+          <li><span onClick={onNavigateFavorites}>Suosikit</span></li>
         </ul>
 
         <button type="button" className="btn btn-outline" onClick={onNavigateLogin}>
@@ -92,7 +66,7 @@ function Home({ onNavigateLogin }) {
           sopivat elokuvat leffaharrastajien yhteisöstä.
         </p>
         <div className="hero-actions">
-          <button type="button" className="btn btn-primary">Selaa elokuvia</button>
+          <button type="button" className="btn btn-primary" onClick={onNavigateSearch}>Selaa elokuvia</button>
           <button type="button" className="btn btn-outline">▶ Katso esittely</button>
         </div>
       </section>
