@@ -1,16 +1,21 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-
 import './App.css';
 import './Home.css';
+import MovieDetails from './MovieDetails';
 
 function MovieCard({ movie, onClick }) {
   return (
     <div
       className="movie-card"
-      onClick={() => onClick?.(movie)}
+      onClick={() => onClick?.(movie.id)}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
+      onKeyDown={(event) => {
+        if (onClick && (event.key === 'Enter' || event.key === ' ')) {
+          onClick(movie.id);
+        }
+      }}
     >
       <div className="movie-poster gradient-1">
         {movie.poster ? (
@@ -42,7 +47,12 @@ function MovieCard({ movie, onClick }) {
   );
 }
 
-function MovieGrid({ movies, loading, error, onMovieClick }) {
+function MovieGrid({
+  movies,
+  loading,
+  error,
+  onMovieClick
+}) {
   if (loading) {
     return (
       <p className="movie-message">
@@ -88,7 +98,7 @@ function Home({
   onNavigateAccount,
   onLogout
 }) {
-  //TALLENNETAAN TRENDAAVAT JA NYT TEATTERISSA OLEVAT ELOKUVAT ERIKSEEN
+  // Tallennetaan trendaavat ja nyt teattereissa olevat elokuvat erikseen
   const [trending, setTrending] = useState([]);
   const [nowPlaying, setNowPlaying] = useState([]);
 
@@ -100,13 +110,19 @@ function Home({
 
   // true = näytetään kaikki nyt teattereissa
   const [showAllNowPlaying, setShowAllNowPlaying] = useState(false);
-// HAETAAN MOLEMMAT LISTAT HETI, KUN ETUSIVU AVATAAN
+
+  // Tähän tallennetaan avatun elokuvan TMDB ID
+  // Kun ID on olemassa, elokuvan tietomodal näytetään.
+  const [selectedMovieId, setSelectedMovieId] = useState(null);
+
+  // Haetaan molemmat listat heti, kun etusivu avataan
   useEffect(() => {
     const loadMovies = async () => {
       try {
         setLoading(true);
         setError('');
-//MOLEMMAT APIKUTSUT SAMAAN AIKAAN
+
+        // Molemmat API-kutsut tehdään samaan aikaan
         const [
           trendingResponse,
           nowPlayingResponse
@@ -132,7 +148,8 @@ function Home({
     loadMovies();
   }, []);
 
-  //ETUSIVULLA NÄYTETÄÄN 5, NÄYTÄ KAIKKI TUO KOKONAAN APISTA SAADUN LISTAN
+  // Etusivulla näytetään 5 elokuvaa.
+  // "Näytä kaikki" näyttää koko API:sta saadun listan.
   const visibleTrending = showAllTrending
     ? trending
     : trending.slice(0, 5);
@@ -141,15 +158,18 @@ function Home({
     ? nowPlaying
     : nowPlaying.slice(0, 5);
 
+  // Suljetaan kaikki erilliset näkymät
   const closeAllViews = () => {
     setShowAllTrending(false);
     setShowAllNowPlaying(false);
+
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
     });
   };
 
+  // Avataan kaikki trendaavat elokuvat
   const openTrending = () => {
     setShowAllTrending(true);
     setShowAllNowPlaying(false);
@@ -160,6 +180,7 @@ function Home({
     });
   };
 
+  // Avataan kaikki Suomessa teattereissa olevat elokuvat
   const openNowPlaying = () => {
     setShowAllNowPlaying(true);
     setShowAllTrending(false);
@@ -168,6 +189,16 @@ function Home({
       top: 0,
       behavior: 'smooth'
     });
+  };
+
+  // Avataan valitun elokuvan tietomodal
+  const openMovieDetails = (movieId) => {
+    setSelectedMovieId(movieId);
+  };
+
+  // Suljetaan elokuvan tietomodal
+  const closeMovieDetails = () => {
+    setSelectedMovieId(null);
   };
 
   return (
@@ -299,6 +330,7 @@ function Home({
             movies={trending}
             loading={loading}
             error={error}
+            onMovieClick={openMovieDetails}
           />
         </section>
       )}
@@ -308,7 +340,6 @@ function Home({
           <div className="section-header">
             <div>
               <h2>Nyt elokuvateattereissa Suomessa</h2>
-
             </div>
 
             <button
@@ -324,6 +355,7 @@ function Home({
             movies={nowPlaying}
             loading={loading}
             error={error}
+            onMovieClick={openMovieDetails}
           />
         </section>
       )}
@@ -347,6 +379,7 @@ function Home({
               movies={visibleTrending}
               loading={loading}
               error={error}
+              onMovieClick={openMovieDetails}
             />
           </section>
 
@@ -367,6 +400,7 @@ function Home({
               movies={visibleNowPlaying}
               loading={loading}
               error={error}
+              onMovieClick={openMovieDetails}
             />
           </section>
         </>
@@ -375,6 +409,15 @@ function Home({
       <footer className="site-footer">
         © 2026 Leffapiiri — rakennettu leffaharrastajille
       </footer>
+
+      {/* Elokuvan tiedot avataan ponnahdusikkunassa */}
+      {selectedMovieId && (
+        <MovieDetails
+          movieId={selectedMovieId}
+          onClose={closeMovieDetails}
+        />
+      )}
+
     </div>
   );
 }

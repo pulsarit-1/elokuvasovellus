@@ -1,0 +1,180 @@
+.movie-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+
+  background: rgba(0, 0, 0, 0.75);
+
+  overflow-y: auto;
+}
+
+.movie-modal {
+  position: relative;
+
+  width: 100%;
+  max-width: 850px;
+  max-height: 90vh;
+
+  overflow-y: auto;
+
+  background: #181513;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+
+  padding: 32px;
+
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.movie-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+
+  width: 36px;
+  height: 36px;
+
+  border: none;
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+
+  font-size: 26px;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.movie-modal-close:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.movie-modal-content {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 28px;
+
+  padding-right: 30px;
+}
+
+.movie-modal-poster {
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.movie-modal-poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.movie-modal-info h2 {
+  font-size: 30px;
+  margin: 0 40px 8px 0;
+}
+
+.movie-modal-meta {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 18px;
+}
+
+.movie-modal-rating {
+  display: inline-block;
+
+  color: var(--accent);
+  font-weight: 700;
+
+  padding: 8px 12px;
+  border-radius: 8px;
+
+  background: rgba(255, 255, 255, 0.06);
+
+  margin-bottom: 16px;
+}
+
+.movie-modal-info h3,
+.movie-modal-reviews h3 {
+  font-size: 17px;
+  margin-top: 24px;
+  margin-bottom: 8px;
+}
+
+.movie-modal-overview {
+  line-height: 1.6;
+  color: #ddd;
+}
+
+.movie-modal-reviews {
+  margin-top: 30px;
+  padding-top: 24px;
+
+  border-top: 1px solid var(--border);
+}
+
+.review {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+
+  margin-bottom: 8px;
+}
+
+.review-header span {
+  color: var(--accent);
+  font-size: 14px;
+}
+
+.review p {
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+@media (max-width: 700px) {
+  .movie-modal {
+    padding: 24px 20px;
+  }
+
+  .movie-modal-content {
+    grid-template-columns: 120px 1fr;
+    gap: 18px;
+  }
+
+  .movie-modal-info h2 {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 500px) {
+  .movie-modal-overlay {
+    padding: 10px;
+  }
+
+  .movie-modal {
+    padding: 20px;
+  }
+
+  .movie-modal-content {
+    grid-template-columns: 1fr;
+  }
+
+  .movie-modal-poster {
+    width: 160px;
+  }
+}
