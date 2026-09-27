@@ -36,7 +36,7 @@ function MovieGrid({ movies, loading, error }) {
   );
 }
 
-function Home({ onNavigateLogin, onNavigateSearch, onNavigateFavorites }) {
+function Home({ user, onNavigateLogin, onNavigateSearch, onNavigateFavorites, onNavigateAccount, onLogout }) {
   const [trending, setTrending] = useState([]);
   const [newest, setNewest] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -77,9 +77,21 @@ function Home({ onNavigateLogin, onNavigateSearch, onNavigateFavorites }) {
           <li><span onClick={onNavigateFavorites}>Suosikit</span></li>
         </ul>
 
-        <button type="button" className="btn btn-outline" onClick={onNavigateLogin}>
-          Kirjaudu sisään
-        </button>
+        {user ? (
+          <div className="user-menu">
+            <span className="user-email">{user.email}</span>
+            <button type="button" className="btn btn-outline" onClick={onNavigateAccount}>
+              Oma tili
+            </button>
+            <button type="button" className="btn btn-outline" onClick={onLogout}>
+              Kirjaudu ulos
+            </button>
+          </div>
+        ) : (
+          <button type="button" className="btn btn-outline" onClick={onNavigateLogin}>
+            Kirjaudu sisään
+          </button>
+        )}
       </header>
 
       <section className="hero">

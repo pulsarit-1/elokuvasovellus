@@ -20,6 +20,17 @@
   gap: 16px;
 }
 
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-email {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
 .section {
   padding: 48px;
 }

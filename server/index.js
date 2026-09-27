@@ -39,22 +39,13 @@ app.get('/api/db-test', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Palvelin käynnissä portissa ${PORT}`);
-});
-
-
 app.get('/api/profile', authMiddleware, (req, res) => {
-  res.json({
-    user: req.user
-  });
-});
-
-app.get('/api/profile', authMiddleware, (req, res) => {
-  console.log(req.user);
-
   res.json({
     status: 'ok',
     user: req.user
   });
+});
+
+app.listen(PORT, () => {
+  console.log(`Palvelin käynnissä portissa ${PORT}`);
 });

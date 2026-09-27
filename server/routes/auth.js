@@ -1,13 +1,14 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
-const pool = require('../db');
 const jwt = require('jsonwebtoken');
+const pool = require('../db');
+
 const router = express.Router();
 
+//REKISTERÖITYMISRAJAPINTA UUDEN KÄYTTÄJÄN LUOMISEEN
 router.post('/register', async (req, res) => {
   const { email, password } = req.body;
 
-  // Validointi työohjeen vaatimusten mukaan
   if (!email || !password) {
     return res.status(400).json({ error: 'Sähköposti ja salasana vaaditaan' });
   }
@@ -20,17 +21,16 @@ router.post('/register', async (req, res) => {
   }
 
   try {
-    const passwordHash = await bcrypt.hash(password, 10);
+    const passwordHash = await bcrypt.hash(password, 10); //SALAUS ENNEN TIETOKANTAAN TALLENNUSTA
 
-    const result = await pool.query(
+    const result = await pool.query( //KÄYTTÄJÄN TALLENNUS
       'INSERT INTO users (email, password_hash) VALUES ($1, $2) RETURNING id, email, created_at',
       [email, passwordHash]
     );
 
     res.status(201).json({ status: 'ok', user: result.rows[0] });
   } catch (err) {
-    if (err.code === '23505') {
-      // Postgresin virhekoodi uniikin rajoitteen rikkomiselle
+    if (err.code === '23505') { //ONKO SÄHKÖPOSTI KÄYTÖSSÄ?
       return res.status(409).json({ error: 'Sähköposti on jo käytössä' });
     }
     console.error(err);
@@ -38,7 +38,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-router.post('/login', async (req, res) => {
+router.post('/login', async (req, res) => { //KÄYTTÄJÄNTUNNISTUS RAJAPINTA
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -63,12 +63,12 @@ router.post('/login', async (req, res) => {
     }
 
     const token = jwt.sign(
-      { userId: user.id, email: user.email },
+      { userId: user.id, email: user.email }, //TOKENIIN KÄYTTÄJÄN TUNNISTETIEDOT
       process.env.JWT_SECRET,
-      { expiresIn: '24h' }
+      { expiresIn: '24h' } /VOIMASSAOLO
     );
 
-    res.json({ status: 'ok', token });
+    res.json({ status: 'ok', token }); //JWT-TOKEN FRONTENDILLE
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Palvelinvirhe' });
@@ -76,4 +76,3 @@ router.post('/login', async (req, res) => {
 });
 
 module.exports = router;
-

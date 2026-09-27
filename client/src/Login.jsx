@@ -2,7 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import './Auth.css';
 
-function Login({ onSwitchToRegister, onBackHome }) {
+function Login({ onSwitchToRegister, onBackHome, onLoginSuccess }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -13,13 +13,15 @@ function Login({ onSwitchToRegister, onBackHome }) {
     setError('');
 
     try {
+      //TIEDOT BACKEND KIRJAUTUSMISRAJAPINTAAN
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/login`, {
         email,
         password,
       });
 
-      localStorage.setItem('token', response.data.token);
-      alert('Kirjautuminen onnistui!');
+      localStorage.setItem('token', response.data.token);//JWT-TOKEN TALLENNETAAN SELAIMEN LOCALSTORE
+      localStorage.setItem('userEmail', email);
+      onLoginSuccess(email); //PÄIVITTÄÄ SOVELLUKSEN KIRJAUTUNEESEEN TILAAN
     } catch (err) {
       setError(err.response?.data?.error || 'Kirjautuminen epäonnistui');
     }
