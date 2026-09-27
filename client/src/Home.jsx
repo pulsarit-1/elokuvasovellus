@@ -36,7 +36,31 @@ function MovieGrid({ movies, loading, error }) {
   );
 }
 
-function Home({ onNavigateLogin, onNavigateSearch }) {
+function Home({ onNavigateLogin, onNavigateSearch, onNavigateFavorites }) {
+  const [trending, setTrending] = useState([]);
+  const [newest, setNewest] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const loadMovies = async () => {
+      try {
+        const [trendingResponse, newestResponse] = await Promise.all([
+          axios.get(`${import.meta.env.VITE_API_URL}/api/movies/trending`),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/movies/now-playing`),
+        ]);
+        setTrending(trendingResponse.data);
+        setNewest(newestResponse.data);
+      } catch {
+        setError('Elokuvien lataus epäonnistui');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadMovies();
+  }, []);
+
   return (
     <div>
       <header className="site-header">

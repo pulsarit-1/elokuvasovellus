@@ -7,15 +7,15 @@ import './Search.css';
 const IMAGE_URL = 'https://image.tmdb.org/t/p/w342';
 
 function Search({ onBackHome }) {
-  const [query, setQuery] = useState('');
-  const [movies, setMovies] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [searched, setSearched] = useState(false);
+  const [query, setQuery] = useState(''); // luo muistin hakusanalle
+  const [movies, setMovies] = useState([]); //löydetyt elokuvat tallennetaan
+  const [loading, setLoading] = useState(false); //luo muistin lataukselle
+  const [error, setError] = useState(''); //luo muistin virheelle
+  const [searched, setSearched] = useState(false); //luo muistin onko mitään haettu
 
   const handleSearch = async (e) => {
-    e.preventDefault();
-    if (!query.trim()) return;
+    e.preventDefault(); // estää sivun uudelleenlatauksen lomakkeen lähetyksen yhteydessä
+    if (!query.trim()) return; // estää tyhjän hakusanan lähettämisen
 
     setLoading(true);
     setError('');
@@ -23,7 +23,7 @@ function Search({ onBackHome }) {
     try {
       const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/movies/search`, {
         params: { q: query },
-      });
+      }); // tee GET-pyyntö palvelimelle hakusanalla
       setMovies(response.data);
       setSearched(true);
     } catch {
@@ -33,6 +33,7 @@ function Search({ onBackHome }) {
     }
   };
 
+  
   return (
     <div className="section">
       <button type="button" className="back-link" onClick={onBackHome}>
