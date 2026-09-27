@@ -88,6 +88,7 @@ function Home({
   onNavigateAccount,
   onLogout
 }) {
+  //TALLENNETAAN TRENDAAVAT JA NYT TEATTERISSA OLEVAT ELOKUVAT ERIKSEEN
   const [trending, setTrending] = useState([]);
   const [nowPlaying, setNowPlaying] = useState([]);
 
@@ -99,13 +100,13 @@ function Home({
 
   // true = näytetään kaikki nyt teattereissa
   const [showAllNowPlaying, setShowAllNowPlaying] = useState(false);
-
+// HAETAAN MOLEMMAT LISTAT HETI, KUN ETUSIVU AVATAAN
   useEffect(() => {
     const loadMovies = async () => {
       try {
         setLoading(true);
         setError('');
-
+//MOLEMMAT APIKUTSUT SAMAAN AIKAAN
         const [
           trendingResponse,
           nowPlayingResponse
@@ -131,6 +132,7 @@ function Home({
     loadMovies();
   }, []);
 
+  //ETUSIVULLA NÄYTETÄÄN 5, NÄYTÄ KAIKKI TUO KOKONAAN APISTA SAADUN LISTAN
   const visibleTrending = showAllTrending
     ? trending
     : trending.slice(0, 5);

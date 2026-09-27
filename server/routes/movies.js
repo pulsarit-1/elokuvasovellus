@@ -6,7 +6,7 @@ const router = express.Router();
 const TMDB_URL = 'https://api.themoviedb.org/3';
 const POSTER_URL = 'https://image.tmdb.org/t/p/w500';
 
-//Genret
+//Genret tallennetaan muistiin
 let genreNames = null;
 
 async function getGenreNames() {
@@ -30,7 +30,7 @@ async function getGenreNames() {
   return genreNames;
 }
 
-//elokuvan muotoilut
+//muotoilu frontendille
 
 function formatMovie(movie, genres) {
   return {
@@ -55,7 +55,7 @@ function formatMovie(movie, genres) {
   };
 }
 
-//TmDB listan haku
+//funktio TMBD listojen hakuun
 async function getMovieList(path, params = {}) {
   const genres = await getGenreNames();
 
@@ -72,8 +72,7 @@ async function getMovieList(path, params = {}) {
   );
 }
 
-//Elokuvien haku
-
+//HAKU SUOMEKSI
 router.get('/search', async (req, res) => {
   try {
     const { q, year, genre } = req.query;
@@ -119,9 +118,7 @@ router.get('/search', async (req, res) => {
     });
   }
 });
-
-//Trendaavat
-
+//Viikon trendaavat
 router.get('/trending', async (req, res) => {
   try {
     const movies = await getMovieList(
@@ -139,7 +136,6 @@ router.get('/trending', async (req, res) => {
 });
 
 // SUOMI nyt teatterissa
-
 router.get('/now-playing', async (req, res) => {
   try {
     const movies = await getMovieList(
