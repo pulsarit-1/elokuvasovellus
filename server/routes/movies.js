@@ -3,12 +3,84 @@ const axios = require('axios');
 
 const router = express.Router();
 
+const TMDB_URL = 'https://api.themoviedb.org/3';
+const POSTER_URL = 'https://image.tmdb.org/t/p/w500';
+
+//Genret
+let genreNames = null;
+
+async function getGenreNames() {
+  if (genreNames) {
+    return genreNames;
+  }
+
+  const response = await axios.get(`${TMDB_URL}/genre/movie/list`, {
+    params: {
+      api_key: process.env.TMDB_API_KEY,
+      language: 'fi-FI'
+    }
+  });
+
+  genreNames = {};
+
+  for (const genre of response.data.genres) {
+    genreNames[genre.id] = genre.name;
+  }
+
+  return genreNames;
+}
+
+//elokuvan muotoilut
+
+function formatMovie(movie, genres) {
+  return {
+    id: movie.id,
+    title: movie.title || movie.name || '',
+    year: movie.release_date
+      ? movie.release_date.slice(0, 4)
+      : '',
+    genre: movie.genre_ids?.length
+      ? movie.genre_ids
+          .map((id) => genres[id])
+          .filter(Boolean)
+          .slice(0, 2)
+          .join(' · ')
+      : '',
+    rating: movie.vote_average
+      ? movie.vote_average.toFixed(1)
+      : '–',
+    poster: movie.poster_path
+      ? POSTER_URL + movie.poster_path
+      : null
+  };
+}
+
+//TmDB listan haku
+async function getMovieList(path, params = {}) {
+  const genres = await getGenreNames();
+
+  const response = await axios.get(`${TMDB_URL}${path}`, {
+    params: {
+      api_key: process.env.TMDB_API_KEY,
+      language: 'fi-FI',
+      ...params
+    }
+  });
+
+  return response.data.results.map((movie) =>
+    formatMovie(movie, genres)
+  );
+}
+
+//Elokuvien haku
+
 router.get('/search', async (req, res) => {
   try {
     const { q, year, genre } = req.query;
 
     const params = {
-      api_key: process.env.TMDB_API_KEY
+      api_key: process.env.TMDB_API_KEY,
+      language: 'fi-FI'
     };
 
     if (q) {
@@ -23,17 +95,22 @@ router.get('/search', async (req, res) => {
       params.with_genres = genre;
     }
 
-    const endpoint =
-      q
-        ? 'https://api.themoviedb.org/3/search/movie'
-        : 'https://api.themoviedb.org/3/discover/movie';
+    const endpoint = q
+      ? '/search/movie'
+      : '/discover/movie';
 
-    const response = await axios.get(endpoint, {
-      params
-    });
+    const response = await axios.get(
+      `${TMDB_URL}${endpoint}`,
+      { params }
+    );
 
-    res.json(response.data.results);
+    const genres = await getGenreNames();
 
+    const movies = response.data.results.map((movie) =>
+      formatMovie(movie, genres)
+    );
+
+    res.json(movies);
   } catch (err) {
     console.error(err);
 
@@ -43,71 +120,42 @@ router.get('/search', async (req, res) => {
   }
 });
 
-const TMDB_URL = 'https://api.themoviedb.org/3';
-const POSTER_URL = 'https://image.tmdb.org/t/p/w500';
-
-// Api hakee genret id:llä ja palauttaa ne nimenä. haetaan vain kerran
-
-let genreNames = null;
-
-async function getGenreNames() {
-  if (genreNames) {
-    return genreNames;
-  }
-
-  const response = await axios.get(`${TMDB_URL}/genre/movie/list`, {
-    params: { api_key: process.env.TMDB_API_KEY, language: 'fi-FI' }
-  });
-
-  genreNames = {};
-  for (const genre of response.data.genres) {
-    genreNames[genre.id] = genre.name;
-  }
-  return genreNames;
-}
-
-// Formatointi näytettävään muotoon
-
-function formatMovie(movie, genres) {
-  return {
-    id: movie.id,
-    title: movie.title,
-    year: movie.release_date ? movie.release_date.slice(0, 4) : '',
-    genre: genres[movie.genre_ids[0]] || '',
-    rating: movie.vote_average.toFixed(1),
-    poster: movie.poster_path ? POSTER_URL + movie.poster_path : null
-  };
-}
-
-// Hakee viisi viimeisintä elokuvaa 
-
-async function getMovieList(path) {
-  const genres = await getGenreNames();
-
-  const response = await axios.get(`${TMDB_URL}${path}`, {
-    params: { api_key: process.env.TMDB_API_KEY, language: 'fi-FI', region: 'FI' }
-  });
-
-  return response.data.results
-    .slice(0, 5)
-    .map((movie) => formatMovie(movie, genres));
-}
+//Trendaavat
 
 router.get('/trending', async (req, res) => {
   try {
-    res.json(await getMovieList('/trending/movie/week'));
+    const movies = await getMovieList(
+      '/trending/movie/week'
+    );
+
+    res.json(movies);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'TMDB virhe' });
+
+    res.status(500).json({
+      error: 'TMDB virhe'
+    });
   }
 });
 
+// SUOMI nyt teatterissa
+
 router.get('/now-playing', async (req, res) => {
   try {
-    res.json(await getMovieList('/movie/now_playing'));
+    const movies = await getMovieList(
+      '/movie/now_playing',
+      {
+        region: 'FI'
+      }
+    );
+
+    res.json(movies);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'TMDB virhe' });
+
+    res.status(500).json({
+      error: 'TMDB virhe'
+    });
   }
 });
 
