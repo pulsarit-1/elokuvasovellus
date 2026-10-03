@@ -71,6 +71,29 @@ async function getMovieList(path, params = {}) {
   );
 }
 
+// Daniilin rivi: hakusivun genresuodattimet - kuratoitu lista yleisimmistä
+// genreistä (ei koko TMDB:n 19 genren listaa)
+const PRIMARY_GENRE_IDS = [53, 18, 878, 35, 80, 14, 9648]; // Trilleri, Draama, Sci-Fi, Komedia, Rikos, Fantasia, Mysteeri
+
+// Daniilin rivi: palauttaa genrelistan Haku-sivun suodatinpillejä varten
+router.get('/genres', async (req, res) => {
+  try {
+    const genres = await getGenreNames();
+
+    const results = PRIMARY_GENRE_IDS
+      .filter((id) => genres[id])
+      .map((id) => ({ id, name: genres[id] }));
+
+    res.json(results);
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      error: 'TMDB virhe'
+    });
+  }
+});
+
 // Haku suomeksi
 router.get('/search', async (req, res) => {
   try {
