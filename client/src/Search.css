@@ -43,3 +43,35 @@
   height: 100%;
   object-fit: cover;
 }
+
+/* Daniilin rivi: genre-suodatinpillien rivi ja pillien ulkoasu (myös valittu tila) */
+.genre-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.genre-chip {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 7px 14px;
+  border-radius: 999px;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.genre-chip:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.genre-chip.active {
+  background: rgba(217, 164, 65, 0.15);
+  border-color: rgba(217, 164, 65, 0.5);
+  color: var(--accent);
+}
