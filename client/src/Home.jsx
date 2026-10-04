@@ -36,7 +36,11 @@ function MovieGrid({ movies, loading, error }) {
   );
 }
 
-function Home({ onNavigateLogin, onNavigateSearch }) {
+  function Home({ onNavigateLogin, onNavigateSearch, onNavigateFavorites }) {
+  const [trending, setTrending] = useState([]);
+  const [newest, setNewest] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   return (
     <div>
       <header className="site-header">
