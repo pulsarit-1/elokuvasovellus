@@ -20,6 +20,17 @@
   gap: 16px;
 }
 
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-email {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
 .section {
   padding: 48px;
 }
@@ -27,33 +38,80 @@
 .section-header {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
   margin-bottom: 24px;
+  gap: 20px;
 }
 
 .section-header h2 {
   font-size: 22px;
+  margin: 0;
 }
+
+.section-header p {
+  margin: 6px 0 0;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
 
 .section-header .see-all {
   color: var(--text-muted);
   font-size: 14px;
   text-decoration: none;
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
 }
+
+.section-header .see-all:hover {
+  color: var(--text);
+  text-decoration: underline;
+}
+
+
+.all-movies-page {
+  min-height: 500px;
+}
+
+.all-movies-page .section-header {
+  align-items: center;
+}
+
+.all-movies-page .section-header > div:first-child {
+  flex: 1;
+}
+
 
 .movie-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 20px;
 }
 
+
+
 .movie-card {
   transition: transform 0.15s ease;
+  cursor: pointer;
+  min-width: 0;
 }
 
 .movie-card:hover {
   transform: translateY(-4px);
 }
+
+.movie-card:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: var(--radius);
+}
+
+
 
 .movie-poster {
   position: relative;
@@ -65,6 +123,7 @@
   align-items: center;
   justify-content: center;
   margin-bottom: 12px;
+  background: #24211f;
 }
 
 .movie-poster-img {
@@ -76,38 +135,87 @@
   border-radius: var(--radius);
 }
 
+
+.movie-poster-placeholder {
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--text-muted);
+  font-size: 13px;
+  text-align: center;
+}
+
+
 .movie-message {
   color: var(--text-muted);
+  padding: 20px 0;
 }
+
 
 .movie-rating {
   position: absolute;
   top: 10px;
   right: 10px;
+
   background: rgba(16, 14, 12, 0.8);
   color: var(--accent);
+
   font-size: 12px;
   font-weight: 600;
+
   padding: 4px 8px;
   border-radius: 4px;
+
+  z-index: 2;
 }
+
 
 .movie-title {
   font-weight: 600;
   font-size: 15px;
   margin-bottom: 2px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
+
 
 .movie-meta {
   font-size: 13px;
   color: var(--text-muted);
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.gradient-1 { background: linear-gradient(160deg, #4a3b63, #241c33); }
-.gradient-2 { background: linear-gradient(160deg, #2f3b57, #1b212f); }
-.gradient-3 { background: linear-gradient(160deg, #5a3226, #2c1712); }
-.gradient-4 { background: linear-gradient(160deg, #24503f, #12241d); }
-.gradient-5 { background: linear-gradient(160deg, #5a4a1f, #2b2410); }
+
+.gradient-1 {
+  background: linear-gradient(160deg, #4a3b63, #241c33);
+}
+
+.gradient-2 {
+  background: linear-gradient(160deg, #2f3b57, #1b212f);
+}
+
+.gradient-3 {
+  background: linear-gradient(160deg, #5a3226, #2c1712);
+}
+
+.gradient-4 {
+  background: linear-gradient(160deg, #24503f, #12241d);
+}
+
+.gradient-5 {
+  background: linear-gradient(160deg, #5a4a1f, #2b2410);
+}
+
 
 .site-footer {
   text-align: center;
@@ -117,9 +225,19 @@
   font-size: 13px;
 }
 
+@media (max-width: 1100px) {
+  .movie-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 900px) {
   .hero {
     padding: 48px 20px;
+  }
+
+  .hero h1 {
+    font-size: 36px;
   }
 
   .section {
@@ -127,6 +245,43 @@
   }
 
   .movie-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .section-header {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 500px) {
+  .hero h1 {
+    font-size: 30px;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .section-header .see-all {
+    margin-top: -8px;
+  }
+
+  .movie-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .movie-title {
+    font-size: 14px;
+  }
+
+  .movie-meta {
+    font-size: 12px;
   }
 }

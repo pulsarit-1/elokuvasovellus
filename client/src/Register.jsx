@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState } from 'react'; //tilan hallinta
 import axios from 'axios';
 import './Auth.css';
 
+//Lomakkeen tilat 
 function Register({ onSwitchToLogin, onBackHome }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -11,8 +12,10 @@ function Register({ onSwitchToLogin, onBackHome }) {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
+  // Vaatimus, iso kirjain, numero, 8 merkkiä
   const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
 
+  //Lomakkeen lähetys, tietojen tarkistus ennen rekisteröintiä
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -28,17 +31,19 @@ function Register({ onSwitchToLogin, onBackHome }) {
     }
 
     try {
+      //Post-pyynnöllä salasana ja maili backendiin (/api/register)
       await axios.post(`${import.meta.env.VITE_API_URL}/api/register`, {
         email,
         password,
       });
 
+      //Rekisteröinti onnistunut -> onnistumisnäkymä
       setSuccess(true);
     } catch (err) {
       setError(err.response?.data?.error || 'Rekisteröityminen epäonnistui');
     }
   };
-
+//Jos onnistui, vahvistusnäkymä
   if (success) {
     return (
       <div className="auth-page">
@@ -67,7 +72,7 @@ function Register({ onSwitchToLogin, onBackHome }) {
 
       <div className="auth-card">
         <div className="auth-sprockets" aria-hidden="true" />
-
+//Rekisteröitymislomake
         <form className="auth-card-body" onSubmit={handleSubmit}>
           <span className="auth-stub">LEFFAPIIRI</span>
           <h2 className="auth-heading">Luo tili</h2>
