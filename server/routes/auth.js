@@ -65,7 +65,7 @@ router.post('/login', async (req, res) => { //KÄYTTÄJÄNTUNNISTUS RAJAPINTA
     const token = jwt.sign(
       { userId: user.id, email: user.email }, //TOKENIIN KÄYTTÄJÄN TUNNISTETIEDOT
       process.env.JWT_SECRET,
-      { expiresIn: '24h' } /VOIMASSAOLO
+      { expiresIn: '24h' } //VOIMASSAOLO
     );
 
     res.json({ status: 'ok', token }); //JWT-TOKEN FRONTENDILLE
