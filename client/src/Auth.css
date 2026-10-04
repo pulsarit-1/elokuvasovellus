@@ -229,6 +229,26 @@ margin: 0;
 color: #c7b08a;
 font-size: 0.95rem;
 }
+/* Laatikko jota voi klikata, esim. Ryhmät */
+.account-section--button {
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.account-section--button:hover {
+  border-color: #d9a441;
+}
+/* Näyttää samalta kuin muiden laatikoiden otsikot */
+.account-section-title {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-family: 'Fraunces', serif;
+  font-size: 1.17em;
+  font-weight: bold;
+  color: #d4a436;
+}
 @media (max-width: 480px) {
   .auth-card-body { padding: 32px 24px 28px; }
   .auth-heading { font-size: 1.7rem; }

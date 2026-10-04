@@ -47,6 +47,13 @@ router.patch('/:id/approve', authMiddleware, async (req, res) => {
       });
     }
 
+    // Sama pyyntö käsitellään vain kerran
+    if (request.status !== 'pending') {
+      return res.status(409).json({
+        error: 'Pyyntö on jo käsitelty'
+      });
+    }
+
     await pool.query(
       `
       INSERT INTO group_members
@@ -118,6 +125,13 @@ router.patch('/:id/reject', authMiddleware, async (req, res) => {
     if (group.owner_id !== req.user.userId) {
       return res.status(403).json({
         error: 'Ei käyttöoikeutta'
+      });
+    }
+
+    // Sama pyyntö käsitellään vain kerran
+    if (request.status !== 'pending') {
+      return res.status(409).json({
+        error: 'Pyyntö on jo käsitelty'
       });
     }
 
