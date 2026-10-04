@@ -191,12 +191,12 @@ function Home({
     });
   };
 
-  // Avataan valitun elokuvan tietomodal
+  // Avataan valitun elokuvan tiedot
   const openMovieDetails = (movieId) => {
     setSelectedMovieId(movieId);
   };
 
-  // Suljetaan elokuvan tietomodal
+  // Suljetaan elokuvan tiedot
   const closeMovieDetails = () => {
     setSelectedMovieId(null);
   };
@@ -235,11 +235,14 @@ function Home({
             </span>
           </li>
 
-          <li>
-            <span onClick={onNavigateFavorites}>
-              Suosikit
-            </span>
-          </li>
+          {/* Suosikit näytetään vain kirjautuneelle käyttäjälle */}
+          {user && (
+            <li>
+              <span onClick={onNavigateFavorites}>
+                Suosikit
+              </span>
+            </li>
+          )}
         </ul>
 
         {user ? (
@@ -414,6 +417,7 @@ function Home({
       {selectedMovieId && (
         <MovieDetails
           movieId={selectedMovieId}
+          user={user}
           onClose={closeMovieDetails}
         />
       )}

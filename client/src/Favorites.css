@@ -1,0 +1,121 @@
+.favorites-title {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.favorites-form {
+  display: flex;
+  gap: 12px;
+  max-width: 560px;
+  margin-bottom: 32px;
+}
+
+.favorites-form input {
+  flex: 1;
+  padding: 11px 12px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  font-family: inherit;
+}
+
+.favorites-form input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.favorites-error {
+  background: rgba(110, 20, 35, 0.25);
+  border: 1px solid #6e1423;
+  color: #f2b8c2;
+  padding: 10px 12px;
+  border-radius: 4px;
+  max-width: 560px;
+  margin-bottom: 16px;
+}
+
+.favorites-lists {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.favorites-list-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 20px;
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.favorites-list-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.favorites-list-name {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.favorites-list-date {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.favorites-remove {
+  margin-top: 8px;
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.favorites-remove:hover {
+  color: #f2b8c2;
+  text-decoration: underline;
+}
+
+/* Elokuvan ponnahdusikkunan "Lisää listalle" -osio */
+.add-to-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.add-to-list select {
+  padding: 8px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.add-to-list-message {
+  width: 100%;
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+@media (max-width: 500px) {
+  .favorites-form {
+    flex-direction: column;
+  }
+}

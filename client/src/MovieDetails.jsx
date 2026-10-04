@@ -1,8 +1,80 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import './MovieDetails.css';
+import './Favorites.css';
 
-function MovieDetails({ movieId, onClose }) {
+// Kirjautumista vaativiin pyyntöihin liitetään token
+function authHeaders() {
+  return {
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  };
+}
+
+// Näytetään vain kirjautuneelle käyttäjälle: valitaan oma lista ja lisätään elokuva sille
+function AddToList({ movieId }) {
+  const [lists, setLists] = useState([]);
+  const [selectedListId, setSelectedListId] = useState('');
+  const [message, setMessage] = useState('');
+
+  // Haetaan käyttäjän listat pudotusvalikkoa varten
+  useEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/favorites/lists/me`, authHeaders())
+      .then((response) => {
+        setLists(response.data);
+        // Valitaan ensimmäinen lista valmiiksi
+        if (response.data.length > 0) {
+          setSelectedListId(response.data[0].id);
+        }
+      })
+      .catch(() => setMessage('Listojen lataaminen epäonnistui'));
+  }, []);
+
+  const handleAdd = async () => {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/favorites/lists/${selectedListId}/movies`,
+        { movie_id: movieId },
+        authHeaders()
+      );
+      // Backend palauttaa viestin, jos elokuva oli jo listalla
+      setMessage(response.data.message || 'Lisätty listalle!');
+    } catch {
+      setMessage('Lisääminen epäonnistui');
+    }
+  };
+
+  if (lists.length === 0) {
+    return (
+      <p className="add-to-list-message">
+        {message || 'Luo ensin suosikkilista Suosikit-sivulla, niin voit lisätä elokuvia.'}
+      </p>
+    );
+  }
+
+  return (
+    <div className="add-to-list">
+      <select
+        value={selectedListId}
+        onChange={(event) => setSelectedListId(event.target.value)}
+      >
+        {lists.map((list) => (
+          <option key={list.id} value={list.id}>
+            {list.name}
+          </option>
+        ))}
+      </select>
+
+      <button type="button" className="btn btn-primary" onClick={handleAdd}>
+        Lisää listalle
+      </button>
+
+      {message && <p className="add-to-list-message">{message}</p>}
+    </div>
+  );
+}
+
+function MovieDetails({ movieId, user, onClose }) {
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -76,6 +148,9 @@ function MovieDetails({ movieId, onClose }) {
                 {movie.runtime && (
                   <p>{movie.runtime} min</p>
                 )}
+
+                {/* Lisää listalle -osio näkyy vain kirjautuneelle */}
+                {user && <AddToList movieId={movie.id} />}
 
                 <h3>Juoni</h3>
 

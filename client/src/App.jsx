@@ -6,6 +6,7 @@ import Register from './Register';
 import Account from './Account';
 import Groups from './Groups';
 import GroupPage from './GroupPage';
+import Favorites from './Favorites';
 
 function App() {
   const [view, setView] = useState('home');
@@ -45,6 +46,7 @@ function App() {
         user={user}
         onNavigateLogin={() => setView('login')}
         onNavigateSearch={() => setView('search')}
+        onNavigateFavorites={() => setView('favorites')}
         onNavigateAccount={() => setView('account')}
         onLogout={handleLogout}
       />
@@ -55,12 +57,18 @@ function App() {
     return <Search onBackHome={() => setView('home')} />;
   }
 
+  // Suosikit-sivu vain kirjautuneelle. Muuten päädytään alla kirjautumissivulle.
+  if (view === 'favorites' && user) {
+    return <Favorites onBackHome={() => setView('home')} />;
+  }
+
   if (view === 'account') {
     return (
       <Account
         user={user}
         onBackHome={() => setView('home')}
         onNavigateGroups={() => setView('groups')}
+        onNavigateFavorites={() => setView('favorites')}
         onAccountDeleted={handleAccountDeleted}
       />
     );
@@ -87,16 +95,16 @@ function App() {
     );
   }
 
-  return view === 'login' ? (
+  return view === 'register' ? (
+    <Register
+      onSwitchToLogin={() => setView('login')}
+      onBackHome={() => setView('home')}
+    />
+  ) : (
     <Login
       onSwitchToRegister={() => setView('register')}
       onBackHome={() => setView('home')}
       onLoginSuccess={handleLoginSuccess}
-    />
-  ) : (
-    <Register
-      onSwitchToLogin={() => setView('login')}
-      onBackHome={() => setView('home')}
     />
   );
 }
