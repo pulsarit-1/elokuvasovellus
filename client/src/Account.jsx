@@ -2,7 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import './Auth.css';
 
-function Account({ user, onBackHome, onAccountDeleted }) {
+function Account({ user, onBackHome, onNavigateGroups, onAccountDeleted }) {
   const [confirming, setConfirming] = useState(false);
   const [error, setError] = useState('');
   const [deleting, setDeleting] = useState(false);
@@ -43,9 +43,13 @@ function Account({ user, onBackHome, onAccountDeleted }) {
             <div className="account-section">
             <h3>Suosikit</h3>
             </div>
-            <div className="account-section">
-            <h3>Ryhmät</h3>
-            </div>
+            <button
+              type="button"
+              className="account-section account-section--button"
+              onClick={onNavigateGroups}
+            >
+              <span className="account-section-title">Ryhmät</span>
+            </button>
             </div>
           {!confirming ? (
             <button

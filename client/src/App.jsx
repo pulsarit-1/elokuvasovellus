@@ -4,10 +4,13 @@ import Login from './Login';
 import Search from './Search';
 import Register from './Register';
 import Account from './Account';
+import Groups from './Groups';
+import GroupPage from './GroupPage';
 
 function App() {
   const [view, setView] = useState('home');
   const [user, setUser] = useState(null);
+  const [selectedGroupId, setSelectedGroupId] = useState(null); // mikä ryhmä on auki
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -57,8 +60,30 @@ function App() {
       <Account
         user={user}
         onBackHome={() => setView('home')}
+        onNavigateGroups={() => setView('groups')}
         onAccountDeleted={handleAccountDeleted}
       />
+    );
+  }
+
+  // Ryhmäsivu, tänne tullaan Oma tili -sivulta
+  if (view === 'groups') {
+    return (
+      <Groups
+        user={user}
+        onBack={() => setView('account')}
+        onOpenGroup={(groupId) => {
+          setSelectedGroupId(groupId);
+          setView('group');
+        }}
+      />
+    );
+  }
+
+  // Yhden ryhmän oma sivu, tänne tullaan ryhmälistan Avaa-painikkeesta
+  if (view === 'group') {
+    return (
+      <GroupPage groupId={selectedGroupId} onBack={() => setView('groups')} />
     );
   }
 

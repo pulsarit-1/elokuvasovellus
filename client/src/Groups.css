@@ -1,0 +1,141 @@
+/* Otsikko ja Luo ryhmä -painike samalle riville */
+.groups-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  max-width: 720px;
+  margin-bottom: 24px;
+}
+
+.groups-title {
+  font-size: 2rem;
+}
+
+.groups-subtitle {
+  font-size: 1.2rem;
+  margin: 32px 0 12px;
+}
+
+/* Luo ryhmä -lomake */
+.groups-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  max-width: 720px;
+  margin-bottom: 16px;
+}
+
+.groups-form input {
+  flex: 1;
+  min-width: 180px;
+  padding: 11px 12px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  font-family: inherit;
+}
+
+.groups-form input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(217, 164, 65, 0.15);
+}
+
+.groups-error {
+  background: rgba(110, 20, 35, 0.25);
+  border: 1px solid #6e1423;
+  color: #f2b8c2;
+  padding: 10px 12px;
+  border-radius: 4px;
+  max-width: 720px;
+  margin-bottom: 16px;
+}
+
+/* Ryhmälista */
+.groups-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Yksi ryhmä: nimi vasemmalla, painike tai rooli oikealla */
+.group-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  min-height: 62px;
+  padding: 10px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.group-name {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.group-role {
+  color: var(--text-muted);
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+/* Painikkeet tai rooli ja painike vierekkäin rivin oikeassa reunassa */
+.group-buttons {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* ---------- Yhden ryhmän sivu ---------- */
+
+.group-movie {
+  min-width: 0;
+}
+
+/* Vuosirivi vie tilan vaikka vuotta ei olisi, niin Poista-linkit pysyvät samalla tasolla */
+.group-movie .movie-meta {
+  min-height: 18px;
+}
+
+/* Pieni Poista-linkki elokuvan alla */
+.group-small-button {
+  background: none;
+  border: none;
+  padding: 4px 0;
+  color: var(--text-muted);
+  font-size: 13px;
+  text-decoration: underline;
+}
+
+.group-small-button:hover {
+  color: var(--accent);
+}
+
+/* Sivun alareuna: Poistu ryhmästä tai Poista ryhmä */
+.group-footer {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  max-width: 720px;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.group-danger {
+  background: #6e1423;
+  color: var(--text);
+}

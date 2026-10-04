@@ -2,7 +2,7 @@
 
 ## Yleiskuvaus
 
-Elokuvasovelluksen tietokanta koostuu kuudesta taulusta:
+Elokuvasovelluksen tietokanta koostuu seitsemästä taulusta:
 
 - users
 - reviews
@@ -10,6 +10,7 @@ Elokuvasovelluksen tietokanta koostuu kuudesta taulusta:
 - groups
 - group_members
 - join_requests
+- group_movies
 
 Tietokanta mahdollistaa käyttäjien hallinnan, elokuvien arvostelut, suosikkilistat sekä käyttäjäryhmät ja liittymispyynnöt.
 
@@ -125,6 +126,25 @@ Status voi olla:
 
 ---
 
+## group_movies
+
+Sisältää ryhmäsivuille lisätyt elokuvat.
+
+Kentät:
+
+- id
+- group_id
+- movie_id
+- title
+- poster
+- year
+- added_by
+- created_at
+
+Sama elokuva voi olla yhdessä ryhmässä vain kerran.
+
+---
+
 # Taulujen suhteet
 
 users → reviews
@@ -155,6 +175,14 @@ users → join_requests
 
 Käyttäjä voi lähettää liittymispyyntöjä ryhmiin.
 
+groups → group_movies
+
+Ryhmällä voi olla useita elokuvia.
+
+users → group_movies
+
+Käyttäjä voi lisätä elokuvia ryhmiin, joissa hän on jäsenenä.
+
 ---
 
 # Tietokannan käyttötarkoitus
@@ -168,3 +196,4 @@ Tietokanta tukee kaikkia projektin keskeisiä toimintoja:
 - ryhmien luonti
 - ryhmiin liittyminen
 - liittymispyyntöjen käsittely
+- elokuvien lisääminen ryhmäsivulle
