@@ -1,12 +1,47 @@
+/* ---------- Hero ---------- */
+
 .hero {
-  padding: 80px 48px 64px;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(32px, 6vw, 96px);
+  padding: clamp(40px, 7vw, 88px) var(--page-pad) clamp(40px, 6vw, 72px);
   border-bottom: 1px solid var(--border);
-  max-width: 640px;
+}
+
+/* juliste taustalla antaa värin */
+.hero-backdrop {
+  position: absolute;
+  inset: -60px;
+  z-index: -2;
+  background-size: cover;
+  background-position: center;
+  filter: blur(60px) saturate(1.4);
+  opacity: 0.45;
+}
+
+/* Tummennus pitää tekstin luettavana */
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(90deg, rgba(16, 14, 12, 0.85) 0%, rgba(16, 14, 12, 0.35) 60%, rgba(16, 14, 12, 0.6) 100%),
+    linear-gradient(to bottom, transparent 60%, var(--bg, #100e0c) 100%);
+}
+
+.hero-text {
+  max-width: 600px;
 }
 
 .hero h1 {
-  font-size: 44px;
-  line-height: 1.15;
+  font-size: clamp(28px, 5vw, 48px);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
   margin-bottom: 20px;
 }
 
@@ -17,22 +52,70 @@
 
 .hero-actions {
   display: flex;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
 }
+
+/* 3 julistetta */
+.hero-posters {
+  position: relative;
+  width: 440px;
+  height: 360px;
+}
+
+.hero-poster {
+  --r: 0deg;
+  position: absolute;
+  padding: 0;
+  overflow: hidden;
+  aspect-ratio: 2 / 3;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: #24211f;
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.7);
+  cursor: pointer;
+  transform: rotate(var(--r));
+  transition: transform 0.2s ease;
+}
+
+.hero-poster:hover {
+  transform: translateY(-8px) rotate(var(--r));
+}
+
+.hero-poster:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.hero-poster img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-poster-0 { width: 210px; left: 115px; top: 0;    z-index: 3; }
+.hero-poster-1 { width: 180px; left: 0;     top: 56px; z-index: 2; --r: -7deg; }
+.hero-poster-2 { width: 180px; right: 0;    top: 64px; z-index: 1; --r: 7deg; }
+
+/* ---------- Käyttäjävalikko ---------- */
 
 .user-menu {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .user-email {
   font-size: 14px;
   color: var(--text-muted);
+  margin-right: 4px;
 }
 
+/* ---------- Osiot ---------- */
+
 .section {
-  padding: 48px;
+  padding: clamp(24px, 5vw, 48px) var(--page-pad);
 }
 
 .section-header {
@@ -54,7 +137,6 @@
   font-size: 14px;
 }
 
-
 .section-header .see-all {
   color: var(--text-muted);
   font-size: 14px;
@@ -73,27 +155,62 @@
   text-decoration: underline;
 }
 
-
 .all-movies-page {
   min-height: 500px;
-}
-
-.all-movies-page .section-header {
-  align-items: center;
 }
 
 .all-movies-page .section-header > div:first-child {
   flex: 1;
 }
 
+/* ---------- Elokuvalistat ---------- */
 
+/* "Näytä kaikki */
 .movie-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 20px;
 }
 
+/* Etusivun selattava palkki */
+.movie-row {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: clamp(140px, 16vw, 190px);
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  padding-bottom: 16px;
 
+  /* tumma vierityspalkki */
+  color-scheme: dark;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+
+.movie-row:hover {
+  scrollbar-color: rgba(217, 164, 65, 0.6) transparent;   /* kultainen kun hiiri päällä */
+}
+
+/* Varakeino Safarille */
+.movie-row::-webkit-scrollbar {
+  height: 6px;
+}
+
+.movie-row::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.movie-row::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+}
+
+.movie-row::-webkit-scrollbar-thumb:hover {
+  background: rgba(217, 164, 65, 0.6);
+}
+
+/* ---------- Elokuvakortti ---------- */
 
 .movie-card {
   transition: transform 0.15s ease;
@@ -110,8 +227,6 @@
   outline-offset: 4px;
   border-radius: var(--radius);
 }
-
-
 
 .movie-poster {
   position: relative;
@@ -135,117 +250,118 @@
   border-radius: var(--radius);
 }
 
-
 .movie-poster-placeholder {
   width: 100%;
   height: 100%;
   min-height: 200px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   color: var(--text-muted);
   font-size: 13px;
   text-align: center;
 }
-
 
 .movie-message {
   color: var(--text-muted);
   padding: 20px 0;
 }
 
-
 .movie-rating {
   position: absolute;
   top: 10px;
   right: 10px;
-
   background: rgba(16, 14, 12, 0.8);
   color: var(--accent);
-
   font-size: 12px;
   font-weight: 600;
-
   padding: 4px 8px;
   border-radius: 4px;
-
   z-index: 2;
 }
-
 
 .movie-title {
   font-weight: 600;
   font-size: 15px;
   margin-bottom: 2px;
-
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
 
 .movie-meta {
   font-size: 13px;
   color: var(--text-muted);
-
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+.gradient-1 { background: linear-gradient(160deg, #4a3b63, #241c33); }
+.gradient-2 { background: linear-gradient(160deg, #2f3b57, #1b212f); }
+.gradient-3 { background: linear-gradient(160deg, #5a3226, #2c1712); }
+.gradient-4 { background: linear-gradient(160deg, #24503f, #12241d); }
+.gradient-5 { background: linear-gradient(160deg, #5a4a1f, #2b2410); }
 
-.gradient-1 {
-  background: linear-gradient(160deg, #4a3b63, #241c33);
+/* ---------- harmaat korttipohjat ---------- */
+
+.skeleton {
+  cursor: default;
 }
 
-.gradient-2 {
-  background: linear-gradient(160deg, #2f3b57, #1b212f);
+.skeleton:hover {
+  transform: none;
 }
 
-.gradient-3 {
-  background: linear-gradient(160deg, #5a3226, #2c1712);
+.skeleton .movie-poster {
+  animation: pulse 1.4s ease-in-out infinite;
 }
 
-.gradient-4 {
-  background: linear-gradient(160deg, #24503f, #12241d);
+.skeleton-line {
+  height: 14px;
+  width: 70%;
+  border-radius: 4px;
+  background: #24211f;
 }
 
-.gradient-5 {
-  background: linear-gradient(160deg, #5a4a1f, #2b2410);
+@keyframes pulse {
+  50% { opacity: 0.5; }
 }
 
+/* ---------- Alatunniste ---------- */
 
 .site-footer {
   text-align: center;
-  padding: 32px;
+  padding: 32px var(--page-pad);
   border-top: 1px solid var(--border);
   color: var(--text-muted);
   font-size: 13px;
 }
 
+/* ---------- Responsiivisuus ---------- */
+
+/* Pieni läppäri: 4 saraketta */
 @media (max-width: 1100px) {
   .movie-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
+/* Hero yhteen sarakkeeseen, julisteet pois */
 @media (max-width: 900px) {
   .hero {
-    padding: 48px 20px;
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  .hero h1 {
-    font-size: 36px;
+  .hero-posters {
+    display: none;
   }
+}
 
-  .section {
-    padding: 32px 20px;
-  }
-
+/* Tabletti: 3 saraketta */
+@media (max-width: 800px) {
   .movie-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 16px;
   }
 
@@ -254,11 +370,20 @@
   }
 }
 
-@media (max-width: 500px) {
-  .hero h1 {
-    font-size: 30px;
+/* Käyttäjävalikko pienellä näytöllä */
+@media (max-width: 700px) {
+  .user-menu {
+    flex-wrap: wrap;
+    justify-content: flex-end;
   }
 
+  .user-email {
+    display: none;   /* sähköposti piiloon, tila loppuu muuten */
+  }
+}
+
+/* Puhelin: 2 saraketta */
+@media (max-width: 560px) {
   .hero-actions {
     flex-direction: column;
   }
@@ -283,5 +408,16 @@
 
   .movie-meta {
     font-size: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton .movie-poster {
+    animation: none;
+  }
+
+  .movie-card,
+  .hero-poster {
+    transition: none;
   }
 }

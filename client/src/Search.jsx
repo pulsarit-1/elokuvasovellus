@@ -3,14 +3,19 @@ import axios from 'axios';
 import './App.css';
 import './Home.css';
 import './Search.css';
+import MovieDetails from './MovieDetails'; // Jenni: elokuvan tiedot
 
-function Search({ onBackHome }) {
+
+
+function Search({ user, onBackHome }) {
   const [query, setQuery] = useState(''); // luo muistin hakusanalle
   const [genre, setGenre] = useState(null); // Daniilin rivi: muistaa valitun genren
   const [movies, setMovies] = useState([]); //löydetyt elokuvat tallennetaan
   const [loading, setLoading] = useState(false); //luo muistin lataukselle
   const [error, setError] = useState(''); //luo muistin virheelle
   const [searched, setSearched] = useState(false); //luo muistin onko mitään haettu
+  // Jenni: avatun elokuvan TMDB ID
+  const [selectedMovieId, setSelectedMovieId] = useState(null);
 
   // Daniilin rivi: genrelistan ja sen mahdollisen hakuvirheen muisti
   const [genres, setGenres] = useState([]);
@@ -132,7 +137,19 @@ function Search({ onBackHome }) {
 
       <div className="movie-grid">
         {movies.map((movie) => (
-          <div key={movie.id} className="movie-card">
+        //Jenni: kortti on nyt klikattava
+          <div
+            key={movie.id}
+            className="movie-card"
+            onClick={() => setSelectedMovieId(movie.id)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                setSelectedMovieId(movie.id);
+              }
+            }}
+          >
             <div className="movie-poster gradient-2">
               {/* Daniilin rivi: movie.poster_path -> movie.poster, backend palauttaa nyt valmiin kuva-URL:n */}
               {movie.poster && (
@@ -148,6 +165,14 @@ function Search({ onBackHome }) {
           </div>
         ))}
       </div>
+    {/* Jenni: elokuvan tiedot avautuvat ponnahdusikkunassa */}
+      {selectedMovieId && (
+        <MovieDetails
+          movieId={selectedMovieId}
+          user={user}
+          onClose={() => setSelectedMovieId(null)}
+        />
+      )}
     </div>
   );
 }

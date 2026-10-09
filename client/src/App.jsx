@@ -53,13 +53,13 @@ function App() {
     );
   }
 
-  if (view === 'search') {
-    return <Search onBackHome={() => setView('home')} />;
-  }
+if (view === 'search') {
+  return <Search user={user} onBackHome={() => setView('home')} />;
+}
 
   // Suosikit-sivu vain kirjautuneelle. Muuten päädytään alla kirjautumissivulle.
   if (view === 'favorites' && user) {
-    return <Favorites onBackHome={() => setView('home')} />;
+    return <Favorites user={user} onBackHome={() => setView('home')} />;
   }
 
   if (view === 'account') {

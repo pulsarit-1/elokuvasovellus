@@ -3,6 +3,7 @@ import axios from 'axios';
 import './App.css';
 import './Home.css';
 import './Favorites.css';
+import MovieDetails from './MovieDetails'; // JENNI: elokuvan tiedot
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -13,7 +14,7 @@ function authHeaders() {
   };
 }
 
-function Favorites({ onBackHome }) {
+function Favorites({ user, onBackHome }) {
   // Käyttäjän kaikki suosikkilistat
   const [lists, setLists] = useState([]);
 
@@ -27,7 +28,8 @@ function Favorites({ onBackHome }) {
   const [loading, setLoading] = useState(true);
   const [moviesLoading, setMoviesLoading] = useState(false);
   const [error, setError] = useState('');
-
+  // jenni: avatun elokuvan TMDB ID
+  const [selectedMovieId, setSelectedMovieId] = useState(null);
   // Haetaan omat listat, kun sivu avataan
   useEffect(() => {
     const loadLists = async () => {
@@ -119,6 +121,20 @@ function Favorites({ onBackHome }) {
       setError('Listan poistaminen epäonnistui');
     }
   };
+  // Jenni: modaali näytetään yksittäinen lista sekä kaikki listat näkymässä
+  const movieModal = selectedMovieId && (
+    <MovieDetails
+      movieId={selectedMovieId}
+      user={user}
+      onClose={() => setSelectedMovieId(null)}
+      onFavoritesChanged={(listId) => {
+      // Päivitetään avattu lista, jos muutoksia
+      if (selectedList && Number(listId) === selectedList.id) {
+        openList(selectedList);
+      }
+    }}
+  />
+);
 
   // Näkymä 2: yksi lista avattuna
   if (selectedList) {
@@ -151,7 +167,21 @@ function Favorites({ onBackHome }) {
 
         <div className="movie-grid">
           {movies.map((movie) => (
-            <div key={movie.id} className="movie-card">
+// Jenni: kortti on nyt klikattava
+            <div
+              key={movie.id}
+              className="movie-card"
+              onClick={() => setSelectedMovieId(movie.id)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(event) => {
+                // Jenni: kortin oma nappula avaa sivun, ei poista listalta nappi
+                if (event.target !== event.currentTarget) return;
+                if (event.key === 'Enter' || event.key === ' ') {
+                  setSelectedMovieId(movie.id);
+                }
+              }}
+            >
               <div className="movie-poster gradient-1">
                 {movie.poster && (
                   <img className="movie-poster-img" src={movie.poster} alt={movie.title} />
@@ -163,13 +193,17 @@ function Favorites({ onBackHome }) {
               <button
                 type="button"
                 className="favorites-remove"
-                onClick={() => removeMovie(movie.id)}
+                onClick={(event) => {
+                  event.stopPropagation(); // Jenni: nappi ei avaa sivua
+                  removeMovie(movie.id);
+                }}
               >
                 Poista listalta
               </button>
             </div>
           ))}
         </div>
+        {movieModal}
       </div>
     );
   }
@@ -219,6 +253,7 @@ function Favorites({ onBackHome }) {
           </button>
         ))}
       </div>
+      {movieModal}
     </div>
   );
 }

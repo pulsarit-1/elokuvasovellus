@@ -10,10 +10,12 @@ function authHeaders() {
   };
 }
 
-// Näytetään vain kirjautuneelle käyttäjälle: valitaan oma lista ja lisätään elokuva sille
-function AddToList({ movieId }) {
+// Näytetään vain kirjautuneelle: valitaan oma lista, lisätään tai poistetaan elokuva
+function AddToList({ movieId, onChanged }) {
   const [lists, setLists] = useState([]);
   const [selectedListId, setSelectedListId] = useState('');
+  const [onList, setOnList] = useState(false); // onko elokuva valitulla listalla
+  const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
 
   // Haetaan käyttäjän listat pudotusvalikkoa varten
@@ -30,17 +32,62 @@ function AddToList({ movieId }) {
       .catch(() => setMessage('Listojen lataaminen epäonnistui'));
   }, []);
 
+  // Tarkistetaan aina kun lista vaihtuu, onko elokuva jo valitulla listalla
+  useEffect(() => {
+    if (!selectedListId) return;
+
+    let cancelled = false; // estää vanhan vastauksen ylikirjoittamasta uutta
+
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/favorites/lists/${selectedListId}`)
+      .then((response) => {
+        if (!cancelled) {
+          setOnList(
+            response.data.movies.some(
+              (item) => Number(item.movie_id) === Number(movieId)
+            )
+          );
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedListId, movieId]);
+
   const handleAdd = async () => {
+    setBusy(true);
     try {
-      const response = await axios.post(
+      await axios.post(
         `${import.meta.env.VITE_API_URL}/api/favorites/lists/${selectedListId}/movies`,
         { movie_id: movieId },
         authHeaders()
       );
-      // Backend palauttaa viestin, jos elokuva oli jo listalla
-      setMessage(response.data.message || 'Lisätty listalle!');
+      setOnList(true);
+      setMessage('Lisätty listalle!');
+      onChanged?.(selectedListId); // kertoo ylemmälle sivulle, että lista muuttui
     } catch {
       setMessage('Lisääminen epäonnistui');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleRemove = async () => {
+    setBusy(true);
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_API_URL}/api/favorites/lists/${selectedListId}/movies/${movieId}`,
+        authHeaders()
+      );
+      setOnList(false);
+      setMessage('Poistettu listalta');
+      onChanged?.(selectedListId);
+    } catch {
+      setMessage('Poistaminen epäonnistui');
+    } finally {
+      setBusy(false);
     }
   };
 
@@ -56,7 +103,10 @@ function AddToList({ movieId }) {
     <div className="add-to-list">
       <select
         value={selectedListId}
-        onChange={(event) => setSelectedListId(event.target.value)}
+        onChange={(event) => {
+          setSelectedListId(event.target.value);
+          setMessage(''); // vanha viesti ei koske uutta listaa
+        }}
       >
         {lists.map((list) => (
           <option key={list.id} value={list.id}>
@@ -65,20 +115,40 @@ function AddToList({ movieId }) {
         ))}
       </select>
 
-      <button type="button" className="btn btn-primary" onClick={handleAdd}>
-        Lisää listalle
-      </button>
+      <div className="add-to-list-actions">
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={handleAdd}
+          disabled={busy || onList}
+        >
+          Lisää listalle
+        </button>
+
+        <button
+          type="button"
+          className="btn btn-outline"
+          onClick={handleRemove}
+          disabled={busy || !onList}
+        >
+          Poista listalta
+        </button>
+      </div>
 
       {message && <p className="add-to-list-message">{message}</p>}
     </div>
   );
 }
-
-function MovieDetails({ movieId, user, onClose }) {
+// Ponnahdusikkuna, joka avautuu tietojen näyttämistä varten.
+// movieId: minkä elokuvan tiedot haetaan
+// onClose: käyttäjä haluaa sulkea modaalin
+// onFavoritesChanged: callback, joka kutsutaan kun suosikit muuttuvat
+// 3tilaa: data saatavilla, latautuu, virhe
+function MovieDetails({ movieId, user, onClose, onFavoritesChanged }) {
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
+// Haetaan elokuvan tiedot, kun movieId vaihtuu
   useEffect(() => {
     const loadMovie = async () => {
       try {
@@ -96,7 +166,8 @@ function MovieDetails({ movieId, user, onClose }) {
 
     loadMovie();
   }, [movieId]);
-
+// Koko tausta klikattava, ulkopuolen klikkaus sulkee
+// tausta ei sulkeudu, jos modaalia klikataan sisäpuolelta
   return (
     <div className="movie-modal-overlay" onClick={onClose}>
       <div
@@ -111,7 +182,7 @@ function MovieDetails({ movieId, user, onClose }) {
         >
           ×
         </button>
-
+{/* tilat: latautuu, virhe, data saatavilla */}
         {loading && (
           <p className="movie-message">Ladataan elokuvaa...</p>
         )}
@@ -150,7 +221,7 @@ function MovieDetails({ movieId, user, onClose }) {
                 )}
 
                 {/* Lisää listalle -osio näkyy vain kirjautuneelle */}
-                {user && <AddToList movieId={movie.id} />}
+                {user && <AddToList movieId={movie.id} onChanged={onFavoritesChanged} />}
 
                 <h3>Juoni</h3>
 
@@ -168,6 +239,7 @@ function MovieDetails({ movieId, user, onClose }) {
                   Tästä elokuvasta ei ole vielä arvosteluja.
                 </p>
               ) : (
+// Näytetään vain 3 ensimmäistä arvostelua
                 movie.reviews.slice(0, 3).map((review) => (
                   <article
                     className="review"

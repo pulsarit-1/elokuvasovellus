@@ -95,6 +95,14 @@
   align-items: center;
   gap: 10px;
   margin: 16px 0;
+  .add-to-list {
+  flex-wrap: wrap;
+}
+.add-to-list-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
 }
 
 .add-to-list select {

@@ -4,6 +4,7 @@ import './App.css';
 import './Home.css';
 import MovieDetails from './MovieDetails';
 
+// Yksi elokuvakortti. Klikkaus (tai Enter/Space) avaa elokuvan tiedot.
 function MovieCard({ movie, onClick }) {
   return (
     <div
@@ -25,19 +26,13 @@ function MovieCard({ movie, onClick }) {
             alt={movie.title}
           />
         ) : (
-          <div className="movie-poster-placeholder">
-            Ei kuvaa
-          </div>
+          <div className="movie-poster-placeholder">Ei kuvaa</div>
         )}
 
-        <span className="movie-rating">
-          ★ {movie.rating}
-        </span>
+        <span className="movie-rating">★ {movie.rating}</span>
       </div>
 
-      <div className="movie-title">
-        {movie.title}
-      </div>
+      <div className="movie-title">{movie.title}</div>
 
       <div className="movie-meta">
         {movie.year}
@@ -47,44 +42,37 @@ function MovieCard({ movie, onClick }) {
   );
 }
 
-function MovieGrid({
-  movies,
-  loading,
-  error,
-  onMovieClick
-}) {
+// Elokuvalista. row=true: esikatselu
+// row=false: Näytä kaikki" -näkymä
+function MovieGrid({ movies, loading, error, onMovieClick, row = false }) {
+  const className = row ? 'movie-row' : 'movie-grid';
+
+  // Latauksen aikana näytetään harmaita korttipohjia ettei ole tyhjä näkymä
   if (loading) {
     return (
-      <p className="movie-message">
-        Ladataan elokuvia...
-      </p>
+      <div className={className}>
+        {Array.from({ length: row ? 6 : 10 }).map((_, index) => (
+          <div key={index} className="movie-card skeleton">
+            <div className="movie-poster" />
+            <div className="skeleton-line" />
+          </div>
+        ))}
+      </div>
     );
   }
 
   if (error) {
-    return (
-      <p className="movie-message">
-        {error}
-      </p>
-    );
+    return <p className="movie-message">{error}</p>;
   }
 
   if (!movies.length) {
-    return (
-      <p className="movie-message">
-        Elokuvia ei löytynyt.
-      </p>
-    );
+    return <p className="movie-message">Elokuvia ei löytynyt.</p>;
   }
 
   return (
-    <div className="movie-grid">
+    <div className={className}>
       {movies.map((movie) => (
-        <MovieCard
-          key={movie.id}
-          movie={movie}
-          onClick={onMovieClick}
-        />
+        <MovieCard key={movie.id} movie={movie} onClick={onMovieClick} />
       ))}
     </div>
   );
@@ -93,117 +81,78 @@ function MovieGrid({
 function Home({
   user,
   onNavigateLogin,
+  onNavigateRegister,
   onNavigateSearch,
   onNavigateFavorites,
   onNavigateAccount,
   onLogout
 }) {
-  // Tallennetaan trendaavat ja nyt teattereissa olevat elokuvat erikseen
   const [trending, setTrending] = useState([]);
   const [nowPlaying, setNowPlaying] = useState([]);
-
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
 
-  // true = näytetään kaikki trendaavat
-  const [showAllTrending, setShowAllTrending] = useState(false);
+  // Omat virheet kummallekin listalle, jotta yhden epäonnistumine ei tyhjennä toista
+  const [trendingError, setTrendingError] = useState('');
+  const [nowPlayingError, setNowPlayingError] = useState('');
 
-  // true = näytetään kaikki nyt teattereissa
-  const [showAllNowPlaying, setShowAllNowPlaying] = useState(false);
+  // null = Näytä kaikki
+  const [expanded, setExpanded] = useState(null);
 
-  // Tähän tallennetaan avatun elokuvan TMDB ID
-  // Kun ID on olemassa, elokuvan tietomodal näytetään.
+  // Avatun elokuvan TMDB ID
   const [selectedMovieId, setSelectedMovieId] = useState(null);
 
-  // Haetaan molemmat listat heti, kun etusivu avataan
+  // Haetaan molemmat listat heti kun etusivu avataan
   useEffect(() => {
     const loadMovies = async () => {
-      try {
-        setLoading(true);
-        setError('');
+      // allSettled: kumpikin pyyntö käsitellään erikseen, virhe ei keskeytä toista
+      const [trendingResult, nowPlayingResult] = await Promise.allSettled([
+        axios.get(`${import.meta.env.VITE_API_URL}/api/movies/trending`),
+        axios.get(`${import.meta.env.VITE_API_URL}/api/movies/now-playing`)
+      ]);
 
-        // Molemmat API-kutsut tehdään samaan aikaan
-        const [
-          trendingResponse,
-          nowPlayingResponse
-        ] = await Promise.all([
-          axios.get(
-            `${import.meta.env.VITE_API_URL}/api/movies/trending`
-          ),
-          axios.get(
-            `${import.meta.env.VITE_API_URL}/api/movies/now-playing`
-          )
-        ]);
-
-        setTrending(trendingResponse.data);
-        setNowPlaying(nowPlayingResponse.data);
-      } catch (err) {
-        console.error(err);
-        setError('Elokuvien lataus epäonnistui');
-      } finally {
-        setLoading(false);
+      if (trendingResult.status === 'fulfilled') {
+        setTrending(trendingResult.value.data);
+      } else {
+        console.error(trendingResult.reason);
+        setTrendingError('Trendaavien elokuvien lataus epäonnistui');
       }
+
+      if (nowPlayingResult.status === 'fulfilled') {
+        setNowPlaying(nowPlayingResult.value.data);
+      } else {
+        console.error(nowPlayingResult.reason);
+        setNowPlayingError('Teattereissa olevien elokuvien lataus epäonnistui');
+      }
+
+      setLoading(false);
     };
 
     loadMovies();
   }, []);
 
-  // Etusivulla näytetään 5 elokuvaa.
-  // "Näytä kaikki" näyttää koko API:sta saadun listan.
-  const visibleTrending = showAllTrending
-    ? trending
-    : trending.slice(0, 5);
+// 3 ensimmäistä trendaavaa, joilla on juliste
+const heroMovies = trending.filter((movie) => movie.poster).slice(0, 3);
 
-  const visibleNowPlaying = showAllNowPlaying
-    ? nowPlaying
-    : nowPlaying.slice(0, 5);
+  // Etusivulla näytetään 12 elokuvaa
+  const previewTrending = trending.slice(0, 12);
+  const previewNowPlaying = nowPlaying.slice(0, 12);
 
-  // Suljetaan kaikki erilliset näkymät
-  const closeAllViews = () => {
-    setShowAllTrending(false);
-    setShowAllNowPlaying(false);
-
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Avataan kaikki trendaavat elokuvat
-  const openTrending = () => {
-    setShowAllTrending(true);
-    setShowAllNowPlaying(false);
-
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
+  const openExpanded = (section) => {
+    setExpanded(section);
+    scrollToTop();
   };
 
-  // Avataan kaikki Suomessa teattereissa olevat elokuvat
-  const openNowPlaying = () => {
-    setShowAllNowPlaying(true);
-    setShowAllTrending(false);
-
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  };
-
-  // Avataan valitun elokuvan tiedot
-  const openMovieDetails = (movieId) => {
-    setSelectedMovieId(movieId);
-  };
-
-  // Suljetaan elokuvan tiedot
-  const closeMovieDetails = () => {
-    setSelectedMovieId(null);
+  const closeExpanded = () => {
+    setExpanded(null);
+    scrollToTop();
   };
 
   return (
     <div>
-
       <header className="site-header">
         <div className="logo">
           <svg
@@ -215,41 +164,36 @@ function Home({
           >
             <path d="M12 2l1.8 4.4L18 8l-4.4 1.8L12 14l-1.6-4.2L6 8l4.2-1.6L12 2z" />
           </svg>
-
           Leffapiiri
         </div>
 
+        {/* Valikko painikkeina, näppäimistöllä pääsy */}
         <ul className="nav-links">
           <li>
-            <span
-              className="active"
-              onClick={closeAllViews}
-            >
+            <button type="button" className="active" onClick={closeExpanded}>
               Etusivu
-            </span>
+            </button>
           </li>
 
           <li>
-            <span onClick={onNavigateSearch}>
+            <button type="button" onClick={onNavigateSearch}>
               Haku
-            </span>
+            </button>
           </li>
 
           {/* Suosikit näytetään vain kirjautuneelle käyttäjälle */}
           {user && (
             <li>
-              <span onClick={onNavigateFavorites}>
+              <button type="button" onClick={onNavigateFavorites}>
                 Suosikit
-              </span>
+              </button>
             </li>
           )}
         </ul>
 
         {user ? (
           <div className="user-menu">
-            <span className="user-email">
-              {user.email}
-            </span>
+            <span className="user-email">{user.email}</span>
 
             <button
               type="button"
@@ -259,11 +203,7 @@ function Home({
               Oma tili
             </button>
 
-            <button
-              type="button"
-              className="btn btn-outline"
-              onClick={onLogout}
-            >
+              <button type="button" className="btn btn-ghost" onClick={onLogout}>
               Kirjaudu ulos
             </button>
           </div>
@@ -278,93 +218,69 @@ function Home({
         )}
       </header>
 
-      {!showAllTrending && !showAllNowPlaying && (
-        <section className="hero">
-          <span className="badge">
-            Viikon nostot
-          </span>
-
-          <h1>
-            Löydä seuraava suosikkielokuvasi
-          </h1>
-
-          <p>
-            Selaa arvosteluja, kokoa suosikkilistasi
-            ja löydä juuri sinulle sopivat elokuvat
-            leffaharrastajien yhteisöstä.
-          </p>
-
-          <div className="hero-actions">
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={onNavigateSearch}
-            >
-              Selaa elokuvia
-            </button>
-
-            <button
-              type="button"
-              className="btn btn-outline"
-            >
-              ▶ Katso esittely
-            </button>
-          </div>
-        </section>
-      )}
-
-      {showAllTrending && (
-        <section className="section all-movies-page">
-          <div className="section-header">
-            <div>
-              <h2>Trendaavat elokuvat</h2>
-            </div>
-
-            <button
-              type="button"
-              className="btn btn-outline"
-              onClick={closeAllViews}
-            >
-              ← Takaisin
-            </button>
-          </div>
-
-          <MovieGrid
-            movies={trending}
-            loading={loading}
-            error={error}
-            onMovieClick={openMovieDetails}
-          />
-        </section>
-      )}
-
-      {showAllNowPlaying && (
-        <section className="section all-movies-page">
-          <div className="section-header">
-            <div>
-              <h2>Nyt elokuvateattereissa Suomessa</h2>
-            </div>
-
-            <button
-              type="button"
-              className="btn btn-outline"
-              onClick={closeAllViews}
-            >
-              ← Takaisin
-            </button>
-          </div>
-
-          <MovieGrid
-            movies={nowPlaying}
-            loading={loading}
-            error={error}
-            onMovieClick={openMovieDetails}
-          />
-        </section>
-      )}
-
-      {!showAllTrending && !showAllNowPlaying && (
+      {/* ---------- Etusivu ---------- */}
+      {expanded === null && (
         <>
+          <section className="hero">
+  {/* Sumennettu taustakuva */}
+  {heroMovies[0] && (
+    <div
+      className="hero-backdrop"
+      style={{ backgroundImage: `url(${heroMovies[0].poster})` }}
+      aria-hidden="true"
+    />
+  )}
+
+  <div className="hero-text">
+    <span className="badge">Trendaa nyt</span>
+
+    <h1>Löydä seuraava suosikkielokuvasi</h1>
+
+    <p>
+      Selaa arvosteluja, kokoa suosikkilistasi ja löydä juuri
+      sinulle sopivat elokuvat leffaharrastajien yhteisöstä.
+    </p>
+
+    <div className="hero-actions">
+      <button
+        type="button"
+        className="btn btn-primary"
+        onClick={onNavigateSearch}
+      >
+        Selaa elokuvia
+      </button>
+
+      {/* Näytetään vain kirjautumattomalle */}
+      {!user && (
+        <button
+          type="button"
+          className="btn btn-outline"
+          onClick={onNavigateRegister}
+        >
+          Luo tili
+        </button>
+      )}
+    </div>
+  </div>
+
+  {/* 3 trendaavan elokuvan julistenippu */}
+  {heroMovies.length > 0 && (
+    <div className="hero-posters">
+      {heroMovies.map((movie, index) => (
+        <button
+          key={movie.id}
+          type="button"
+          className={`hero-poster hero-poster-${index}`}
+          onClick={() => setSelectedMovieId(movie.id)}
+        >
+          <img src={movie.poster} alt={movie.title} />
+          <span className="movie-rating">★ {movie.rating}</span>
+        </button>
+      ))}
+    </div>
+  )}
+</section>
+
           <section className="section">
             <div className="section-header">
               <h2>Trendaavat elokuvat</h2>
@@ -372,17 +288,18 @@ function Home({
               <button
                 type="button"
                 className="see-all"
-                onClick={openTrending}
+                onClick={() => openExpanded('trending')}
               >
                 Näytä kaikki →
               </button>
             </div>
 
             <MovieGrid
-              movies={visibleTrending}
+              movies={previewTrending}
               loading={loading}
-              error={error}
-              onMovieClick={openMovieDetails}
+              error={trendingError}
+              onMovieClick={setSelectedMovieId}
+              row
             />
           </section>
 
@@ -393,20 +310,51 @@ function Home({
               <button
                 type="button"
                 className="see-all"
-                onClick={openNowPlaying}
+                onClick={() => openExpanded('nowPlaying')}
               >
                 Näytä kaikki →
               </button>
             </div>
 
             <MovieGrid
-              movies={visibleNowPlaying}
+              movies={previewNowPlaying}
               loading={loading}
-              error={error}
-              onMovieClick={openMovieDetails}
+              error={nowPlayingError}
+              onMovieClick={setSelectedMovieId}
+              row
             />
           </section>
         </>
+      )}
+
+      {/* ---------- "Näytä kaikki" -näkymä ---------- */}
+      {expanded !== null && (
+        <section className="section all-movies-page">
+          <div className="section-header">
+            <div>
+              <h2>
+                {expanded === 'trending'
+                  ? 'Trendaavat elokuvat'
+                  : 'Nyt elokuvateattereissa Suomessa'}
+              </h2>
+            </div>
+
+            <button
+              type="button"
+              className="btn btn-outline"
+              onClick={closeExpanded}
+            >
+              ← Takaisin
+            </button>
+          </div>
+
+          <MovieGrid
+            movies={expanded === 'trending' ? trending : nowPlaying}
+            loading={loading}
+            error={expanded === 'trending' ? trendingError : nowPlayingError}
+            onMovieClick={setSelectedMovieId}
+          />
+        </section>
       )}
 
       <footer className="site-footer">
@@ -418,10 +366,9 @@ function Home({
         <MovieDetails
           movieId={selectedMovieId}
           user={user}
-          onClose={closeMovieDetails}
+          onClose={() => setSelectedMovieId(null)}
         />
       )}
-
     </div>
   );
 }

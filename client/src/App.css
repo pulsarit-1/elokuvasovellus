@@ -1,9 +1,23 @@
+:root {
+/* leveällä näytöllä sisältö keskitetään enintään 1280 px */
+  --page-pad: max(clamp(16px, 4vw, 48px), calc((100% - 1280px) / 2));
+}
+
+/* ---------- Yläpalkki ---------- */
+
 .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 48px;
+  gap: 24px;
+  padding: 14px var(--page-pad);
   border-bottom: 1px solid var(--border);
+  background: rgba(16, 14, 12, 0.72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
 .logo {
@@ -19,38 +33,69 @@
   color: var(--accent);
 }
 
+/* Valikko pyöreänä */
 .nav-links {
   display: flex;
-  gap: 32px;
+  gap: 4px;
   list-style: none;
   margin: 0;
-  padding: 0;
-  font-size: 15px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.nav-links button {
+  background: none;
+  border: none;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
   color: var(--text-muted);
+  padding: 8px 18px;
+  border-radius: 999px;
   cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
 }
 
-.nav-links span:hover {
+.nav-links button:hover {
   color: var(--text);
 }
 
-.nav-links .active {
+.nav-links button.active {
+  background: rgba(255, 255, 255, 0.09);
   color: var(--text);
-  border-bottom: 2px solid var(--accent);
-  padding-bottom: 4px;
 }
+
+.nav-links button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* ---------- Napit ---------- */
 
 .btn {
-  border-radius: 4px;
-  padding: 10px 20px;
-  font-size: 15px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 10px 22px;
+  font-family: inherit;
+  font-size: 14px;
   font-weight: 600;
   border: 1px solid transparent;
-  transition: filter 0.15s ease, border-color 0.15s ease;
+  cursor: pointer;
+  transition: transform 0.15s ease, filter 0.15s ease,
+    border-color 0.15s ease, color 0.15s ease;
 }
 
 .btn:hover {
   filter: brightness(1.08);
+}
+
+.btn:active {
+  transform: scale(0.98);
 }
 
 .btn:disabled {
@@ -73,6 +118,19 @@
   border-color: var(--accent);
 }
 
+/* Kevyt tekstinappi Kirjaudu ulos) */
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.btn-ghost:hover {
+  color: var(--text);
+  filter: none;
+}
+
+/* ---------- Muut ---------- */
+
 .badge {
   display: inline-block;
   background: var(--surface);
@@ -82,7 +140,7 @@
   letter-spacing: 1px;
   text-transform: uppercase;
   padding: 6px 12px;
-  border-radius: 4px;
+  border-radius: 999px;
   margin-bottom: 20px;
 }
 
@@ -99,16 +157,41 @@
   color: var(--accent);
 }
 
+/* ---------- Responsiivisuus ---------- */
+
 @media (max-width: 900px) {
   .site-header {
-    padding: 16px 20px;
+    position: static;     /* ei kiinnitetä, kaksirivinen palkki vie liikaa tilaa */
     flex-wrap: wrap;
     gap: 12px;
   }
 
+  /* Valikko omalle rivillee */
   .nav-links {
-    gap: 20px;
     order: 3;
     width: 100%;
+  }
+
+  .nav-links li {
+    flex: 1;
+  }
+
+  .nav-links button {
+    width: 100%;
+    padding: 10px 8px;    /* isompi napautusalue */
+  }
+}
+
+@media (max-width: 560px) {
+  .btn {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .nav-links button {
+    transition: none;
   }
 }
