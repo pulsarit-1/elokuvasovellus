@@ -47,4 +47,4 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'Leffapiiri-api'
-          package: '.' # Julkaisee server-kansion sisällön
+          package: server # Julkaisee server-kansion sisällön (working-directory ei koske uses-askeleita)
