@@ -1,0 +1,1397 @@
+{
+  "auth": {
+    "bearer": [
+      {
+        "key": "token",
+        "type": "string",
+        "value": "{{token}}"
+      }
+    ],
+    "type": "bearer"
+  },
+  "event": [
+    {
+      "listen": "test",
+      "script": {
+        "exec": [
+          "pm.environment.set(\"token\", pm.response.json().token);"
+        ],
+        "type": "text/javascript"
+      }
+    }
+  ],
+  "info": {
+    "_collection_link": "https://go.postman.co/collection/50576600-d1c49e5e-1695-4c5c-aaad-22dd5e444754?source=collection_link",
+    "_exporter_id": "50576600",
+    "_postman_id": "d1c49e5e-1695-4c5c-aaad-22dd5e444754",
+    "name": "Leffapiiri API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "item": [
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 409 Conflict (email already in use)\", function () {\n    pm.response.to.have.status(409);\n});\n"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "name": "register",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\"email\":\"jaana@testi.fi\",\"password\":\"Salasana123\"}"
+            },
+            "description": "StartFragment\n\n```\nLuo uuden käyttäjätilin sähköpostilla ja salasanalla.\n**Kirjautuminen:** Ei vaadita\n**Body (JSON):**\n- `email` (pakollinen): käyttäjän sähköposti, oltava uniikki\n- `password` (pakollinen): vähintään 8 merkkiä, sisältää vähintään yhden ison kirjaimen ja yhden numeron\n**Vastaukset:**\n- `201` Tili luotu. Palauttaa `status` ja `user` (`id`, `email`, `created_at`). Salasanaa ei palauteta.\n- `400` Sähköposti tai salasana puuttuu, tai salasana ei täytä vaatimuksia\n- `409` Sähköposti on jo käytössä\n- `500` Palvelinvirhe\n\n ```\n\nEndFragment",
+            "header": [],
+            "method": "POST",
+            "url": {
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "register"
+              ],
+              "raw": "{{baseUrl}}/register"
+            }
+          },
+          "response": [
+            {
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": \"ok\",\n  \"user\": {\n    \"id\": 27,\n    \"email\": \"jarkko@testi.fi\",\n    \"created_at\": \"2026-10-10T18:46:38.670Z\"\n  }\n}",
+              "code": 201,
+              "cookie": [],
+              "header": [
+                {
+                  "key": "x-powered-by",
+                  "value": "Express"
+                },
+                {
+                  "key": "access-control-allow-origin",
+                  "value": "*"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "content-length",
+                  "value": "98"
+                },
+                {
+                  "key": "etag",
+                  "value": "W/\"62-2TqArOfKuOksAqcX/yJ5h+3JsW4\""
+                },
+                {
+                  "key": "date",
+                  "value": "Sat, 10 Oct 2026 18:46:39 GMT"
+                },
+                {
+                  "key": "connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "keep-alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "name": "register",
+              "originalRequest": {
+                "body": {
+                  "mode": "raw",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  },
+                  "raw": "{\"email\":\"jarkko@testi.fi\",\"password\":\"Salasana123\"}"
+                },
+                "header": [],
+                "method": "POST",
+                "url": {
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "register"
+                  ],
+                  "raw": "{{baseUrl}}/register"
+                }
+              },
+              "status": "Created"
+            },
+            {
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"error\": \"Sähköposti on jo käytössä\"\n}",
+              "code": 409,
+              "cookie": [],
+              "header": [
+                {
+                  "key": "x-powered-by",
+                  "value": "Express"
+                },
+                {
+                  "key": "access-control-allow-origin",
+                  "value": "*"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "content-length",
+                  "value": "42"
+                },
+                {
+                  "key": "etag",
+                  "value": "W/\"2a-uHTfI9Pgvvs+pkYvzHQwI96jzug\""
+                },
+                {
+                  "key": "date",
+                  "value": "Sat, 10 Oct 2026 18:47:54 GMT"
+                },
+                {
+                  "key": "connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "keep-alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "name": "register",
+              "originalRequest": {
+                "body": {
+                  "mode": "raw",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  },
+                  "raw": "{\"email\":\"jarkko@testi.fi\",\"password\":\"Salasana123\"}"
+                },
+                "header": [],
+                "method": "POST",
+                "url": {
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "register"
+                  ],
+                  "raw": "{{baseUrl}}/register"
+                }
+              },
+              "status": "Conflict"
+            }
+          ]
+        },
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r\nconst json = pm.response.json();\r\npm.test(\"Token palautuu\", () => pm.expect(json.token).to.be.a(\"string\"));\r\npm.environment.set(\"token\", json.token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "name": "login",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\"email\":\"tero@testi.fi\",\"password\":\"Salasana123\"}"
+            },
+            "description": "StartFragment\n\nKirjaa käyttäjän sisään ja palauttaa JWT-tokenin.  \n  \n**Kirjautuminen:** Ei vaadita  \n  \n**Body (JSON):**  \n\\- \\`email\\` (pakollinen)  \n\\- \\`password\\` (pakollinen)  \n  \n**Vastaukset:**  \n\\- \\`200\\` Kirjautuminen onnistui. Palauttaa \\`status\\` ja \\`token\\`. Token on voimassa 24 tuntia ja se lähetetään suojatuissa pyynnöissä otsikossa \\`Authorization: Bearer \\`.  \n\\- \\`400\\` Sähköposti tai salasana puuttuu  \n\\- \\`401\\` Väärä sähköposti tai salasana  \n\\- \\`500\\` Palvelinvirhe  \n  \n**Huom:** Uloskirjautuminen tehdään selaimessa poistamalla token. Palvelimella ei ole erillistä uloskirjautumisreittiä.EndFragment",
+            "header": [],
+            "method": "POST",
+            "url": {
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "login"
+              ],
+              "raw": "{{baseUrl}}/login"
+            }
+          },
+          "response": [
+            {
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": \"ok\",\n  \"token\": \"{{json_web_token_1709}}\"\n}",
+              "code": 200,
+              "cookie": [],
+              "header": [
+                {
+                  "key": "x-powered-by",
+                  "value": "Express"
+                },
+                {
+                  "key": "access-control-allow-origin",
+                  "value": "*"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "content-length",
+                  "value": "202"
+                },
+                {
+                  "key": "etag",
+                  "value": "W/\"ca-bMojpszI8FxhO9ZYcKcFIP0iBTY\""
+                },
+                {
+                  "key": "date",
+                  "value": "Sat, 10 Oct 2026 18:35:11 GMT"
+                },
+                {
+                  "key": "connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "keep-alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "name": "login",
+              "originalRequest": {
+                "body": {
+                  "mode": "raw",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  },
+                  "raw": "{\"email\":\"tero@testi.fi\",\"password\":\"Salasana123\"}"
+                },
+                "header": [],
+                "method": "POST",
+                "url": {
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "login"
+                  ],
+                  "raw": "{{baseUrl}}/login"
+                }
+              },
+              "status": "OK"
+            },
+            {
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"error\": \"Väärä sähköposti tai salasana\"\n}",
+              "code": 401,
+              "cookie": [],
+              "header": [
+                {
+                  "key": "x-powered-by",
+                  "value": "Express"
+                },
+                {
+                  "key": "access-control-allow-origin",
+                  "value": "*"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "content-length",
+                  "value": "46"
+                },
+                {
+                  "key": "etag",
+                  "value": "W/\"2e-tpviHAyenZV7CcaFSeHW0paoeqg\""
+                },
+                {
+                  "key": "date",
+                  "value": "Sat, 10 Oct 2026 18:49:15 GMT"
+                },
+                {
+                  "key": "connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "keep-alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "name": "login",
+              "originalRequest": {
+                "body": {
+                  "mode": "raw",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  },
+                  "raw": "{\"email\":\"jaana@testi.fi\",\"password\":\"Salasana123\"}"
+                },
+                "header": [],
+                "method": "POST",
+                "url": {
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "login"
+                  ],
+                  "raw": "{{baseUrl}}/login"
+                }
+              },
+              "status": "Unauthorized"
+            }
+          ]
+        }
+      ],
+      "name": "Auth"
+    },
+    {
+      "description": "StartFragment\n\nProjekti - Elokuvasovellus  \nBackend:\n\n- Node.js\n    \n- Express\n    \n- PostgreSQL\n    \n- JWT\n    \n- bcrypt\n    \n- TMDB API\n    \n\nPerusosoite:\n\n```\nhttp://localhost:3001/api\n\n ```\n\nEndFragment",
+      "item": [
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "name": "Get me",
+          "request": {
+            "description": "StartFragmentHakee kirjautuneen käyttäjän omat tiedot.  \n  \n**Kirjautuminen:** Vaaditaan (\\`Authorization: Bearer \\`)  \n  \n**Vastaukset:**  \n\\- \\`200\\` Palauttaa \\`id\\`, \\`email\\` ja \\`created_at\\`  \n\\- \\`401\\` Token puuttuu tai on virheellinen tai vanhentunut  \n\\- \\`404\\` Käyttäjää ei löytynyt  \n\\- \\`500\\` PalvelinvirheEndFragment",
+            "header": [],
+            "method": "GET",
+            "url": {
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "me"
+              ],
+              "raw": "{{baseUrl}}/users/me"
+            }
+          },
+          "response": []
+        },
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "name": "Delete me",
+          "request": {
+            "description": "StartFragmentPoistaa kirjautuneen käyttäjän tilin pysyvästi. Käyttäjään liittyvä data (esim. suosikkilistat elokuvineen) poistuu samalla.\n\n**Kirjautuminen:** Vaaditaan (\\`Authorization: Bearer \\`)\n\n**Vastaukset:**  \n\\- \\`200\\` Käyttäjä poistettu. Palauttaa \\`status\\`, \\`message\\` ja \\`deletedUser\\` (\\`id\\`, \\`email\\`)  \n\\- \\`401\\` Token puuttuu tai on virheellinen tai vanhentunut  \n\\- \\`404\\` Käyttäjää ei löytynyt  \n\\- \\`500\\` Palvelinvirhe\n\n**Huom:** Toimintoa ei voi perua.EndFragment",
+            "header": [],
+            "method": "DELETE",
+            "url": {
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "me"
+              ],
+              "raw": "{{baseUrl}}/users/me"
+            }
+          },
+          "response": [
+            {
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": \"ok\",\n  \"message\": \"Käyttäjä poistettu\",\n  \"deletedUser\": {\n    \"id\": 30,\n    \"email\": \"jaana@testi.fi\"\n  }\n}",
+              "code": 200,
+              "cookie": [],
+              "header": [
+                {
+                  "key": "x-powered-by",
+                  "value": "Express"
+                },
+                {
+                  "key": "access-control-allow-origin",
+                  "value": "*"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "content-length",
+                  "value": "98"
+                },
+                {
+                  "key": "etag",
+                  "value": "W/\"62-vLh5FR/HkILSYE4B4np64zJ2kZM\""
+                },
+                {
+                  "key": "date",
+                  "value": "Sun, 11 Oct 2026 14:21:50 GMT"
+                },
+                {
+                  "key": "connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "keep-alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "name": "Delete me",
+              "originalRequest": {
+                "header": [],
+                "method": "DELETE",
+                "url": {
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users",
+                    "me"
+                  ],
+                  "raw": "{{baseUrl}}/users/me"
+                }
+              },
+              "status": "OK"
+            },
+            {
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"error\": \"Token puuttuu\"\n}",
+              "code": 401,
+              "cookie": [],
+              "header": [
+                {
+                  "key": "x-powered-by",
+                  "value": "Express"
+                },
+                {
+                  "key": "access-control-allow-origin",
+                  "value": "*"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "content-length",
+                  "value": "25"
+                },
+                {
+                  "key": "etag",
+                  "value": "W/\"19-opkCv5Cl2lAl3eUU7nGCWu8KOJY\""
+                },
+                {
+                  "key": "date",
+                  "value": "Sun, 11 Oct 2026 14:22:15 GMT"
+                },
+                {
+                  "key": "connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "keep-alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "name": "Delete me",
+              "originalRequest": {
+                "header": [],
+                "method": "DELETE",
+                "url": {
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users",
+                    "me"
+                  ],
+                  "raw": "{{baseUrl}}/users/me"
+                }
+              },
+              "status": "Unauthorized"
+            }
+          ]
+        }
+      ],
+      "name": "Users"
+    },
+    {
+      "item": [
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "name": "Search",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "StartFragmentHakee elokuvia TMDB:stä hakusanalla tai genrellä.  \n  \n**Kirjautuminen:** Ei vaadita  \n  \n**Query-parametrit:**  \n\\- \\`q\\`: hakusana (elokuvan nimi), esim. \\`batman\\`  \n\\- \\`genre\\`: genren TMDB-ID (saatavilla reitiltä \\`GET /movies/genres\\`)  \n  \n**Huom:** Käytä joko \\`q\\` tai \\`genre\\`, ei molempia samaan hakuun. TMDB:n tekstihaku ei tue genre-suodatusta.  \n  \n**Vastaukset:**  \n\\- \\`200\\` Lista elokuvista. Jokaisella \\`id\\` (TMDB-ID), \\`title\\`, \\`poster\\` (kuvan URL), \\`rating\\`, \\`year\\`, \\`genre\\`  \n\\- \\`500\\` Haku epäonnistuiEndFragment",
+            "header": [],
+            "method": "GET",
+            "url": {
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "movies",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "batman"
+                }
+              ],
+              "raw": "{{baseUrl}}/movies/search?q=batman"
+            }
+          },
+          "response": []
+        },
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "name": "Trending",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "StartFragment\n\nHakee tällä hetkellä trendaavat elokuvat.  \n  \n**Kirjautuminen:** Ei vaadita  \n  \n**Vastaukset:**  \n\\- \\`200\\` Lista elokuvista. Jokaisella \\`id\\`, \\`title\\`, \\`poster\\`, \\`rating\\`, \\`year\\`, \\`genre\\`  \n\\- \\`500\\` Haku epäonnistuiEndFragment",
+            "header": [],
+            "method": "GET",
+            "url": {
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "movies",
+                "trending"
+              ],
+              "raw": "{{baseUrl}}/movies/trending"
+            }
+          },
+          "response": []
+        },
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "name": "Now playing",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "StartFragmentHakee elokuvat, jotka pyörivät parhaillaan elokuvateattereissa Suomessa.  \n  \n**Kirjautuminen:** Ei vaadita  \n  \n**Vastaukset:**  \n\\- \\`200\\` Lista elokuvista. Jokaisella \\`id\\`, \\`title\\`, \\`poster\\`, \\`rating\\`, \\`year\\`, \\`genre\\`  \n\\- \\`500\\` Haku epäonnistuiEndFragment",
+            "header": [],
+            "method": "GET",
+            "url": {
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "movies",
+                "now-playing"
+              ],
+              "raw": "{{baseUrl}}/movies/now-playing"
+            }
+          },
+          "response": []
+        },
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "name": "Genres",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "StartFragmentHakee genrelistan, jota käytetään haun genre-suodatuksessa.  \n  \n**Kirjautuminen:** Ei vaadita  \n  \n**Vastaukset:**  \n\\- \\`200\\` Lista genreistä. Jokaisella \\`id\\` ja \\`name\\`  \n\\- \\`500\\` Haku epäonnistuiEndFragment",
+            "header": [],
+            "method": "GET",
+            "url": {
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "movies",
+                "genres"
+              ],
+              "query": [
+                {
+                  "key": "genre",
+                  "value": "genreId"
+                }
+              ],
+              "raw": "{{baseUrl}}/movies/genres?genre=genreId"
+            }
+          },
+          "response": []
+        },
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "name": "Get movie",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "StartFragmentHakee yhden elokuvan tarkat tiedot TMDB-ID:llä.  \n  \n**Kirjautuminen:** Ei vaadita  \n  \n**Polkuparametri:**  \n\\- \\`id\\`: elokuvan TMDB-ID, esim. \\`550\\`  \n  \n**Vastaukset:**  \n\\- \\`200\\` Palauttaa mm. \\`id\\`, \\`title\\`, \\`year\\`, \\`genres\\`, \\`rating\\`, \\`runtime\\`, \\`overview\\`, \\`poster\\` ja \\`reviews\\`  \n\\- \\`404\\` Elokuvaa ei löytynyt  \n\\- \\`500\\` Haku epäonnistuiEndFragment",
+            "header": [],
+            "method": "GET",
+            "url": {
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "movies",
+                "550"
+              ],
+              "raw": "{{baseUrl}}/movies/550"
+            }
+          },
+          "response": []
+        }
+      ],
+      "name": "Movies"
+    },
+    {
+      "item": [
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "name": "Add review",
+          "request": {
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\"movie_id\":550,\"rating\":5,\"review_text\":\"Loistava elokuva\"}"
+            },
+            "description": "Lisää kirjautuneen käyttäjän arvostelun elokuvalle.\n\n**Kirjautuminen:** Vaaditaan (`Authorization: Bearer` )\n\n**Body (JSON):**\n\n- `movie_id` (pakollinen): elokuvan TMDB-ID\n    \n- `rating` (pakollinen): kokonaisluku 1–5 (tähdet)\n    \n- `review_text` (pakollinen): arvostelun teksti\n    \n\n**Vastaukset:**\n\n- `201` Arvostelu luotu. Palauttaa `id`, `movie_id`, `rating`, `review_text`\n    \n- `400` Pakollinen kenttä puuttuu tai arvosana ei ole välillä 1–5\n    \n- `401` Token puuttuu tai on virheellinen\n    \n- `500` Palvelinvirhe",
+            "header": [],
+            "method": "POST",
+            "url": {
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reviews"
+              ],
+              "raw": "{{baseUrl}}/reviews"
+            }
+          },
+          "response": []
+        },
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "name": "Get reviews",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Hakee elokuvan kaikki arvostelut.\n\n**Kirjautuminen:** Ei vaadita\n\n**Polkuparametri:**\n\n- `movieId`: elokuvan TMDB-ID, esim. `550`\n    \n\n**Vastaukset:**\n\n- `200` Lista arvosteluista. Jokaisella `rating`, `review_text` ja `email` (arvostelijan tunnus). Tyhjä lista, jos arvosteluja ei ole.\n    \n- `500` Palvelinvirhe",
+            "header": [],
+            "method": "GET",
+            "url": {
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reviews",
+                "550"
+              ],
+              "raw": "{{baseUrl}}/reviews/550"
+            }
+          },
+          "response": [
+            {
+              "_postman_previewlanguage": "json",
+              "body": "[\n  {\n    \"id\": 1,\n    \"movie_id\": 550,\n    \"rating\": 5,\n    \"review_text\": \"Todella hyvä elokuva\",\n    \"created_at\": \"2026-09-13T11:29:29.356Z\",\n    \"email\": \"testi@testi.fi\"\n  }\n]",
+              "code": 200,
+              "cookie": [],
+              "header": [
+                {
+                  "key": "x-powered-by",
+                  "value": "Express"
+                },
+                {
+                  "key": "access-control-allow-origin",
+                  "value": "*"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "content-length",
+                  "value": "139"
+                },
+                {
+                  "key": "etag",
+                  "value": "W/\"8b-6TyHUdeeEsld/B0/N/vGif3HDzc\""
+                },
+                {
+                  "key": "date",
+                  "value": "Sat, 10 Oct 2026 18:51:42 GMT"
+                },
+                {
+                  "key": "connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "keep-alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "name": "Get reviews",
+              "originalRequest": {
+                "header": [],
+                "method": "GET",
+                "url": {
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reviews",
+                    "550"
+                  ],
+                  "raw": "{{baseUrl}}/reviews/550"
+                }
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ],
+      "name": "Reviews"
+    },
+    {
+      "item": [
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201\", () => pm.response.to.have.status(201));\r\npm.environment.set(\"listId\", pm.response.json().id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "name": "Create list",
+          "request": {
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\"name\":\"Kesän leffat\"}"
+            },
+            "description": "Luo kirjautuneelle käyttäjälle uuden nimetyn suosikkilistan.\n\n**Kirjautuminen:** Vaaditaan (`Authorization: Bearer` )\n\n**Body (JSON):**\n\n- `name` (pakollinen): listan nimi, enintään 255 merkkiä\n    \n\n**Vastaukset:**\n\n- `201` Lista luotu. Palauttaa `id`, `user_id`, `name`, `created_at`\n    \n- `400` Listan nimi puuttuu\n    \n- `401` Token puuttuu tai on virheellinen\n    \n- `500` Palvelinvirhe",
+            "header": [],
+            "method": "POST",
+            "url": {
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "favorites",
+                "lists"
+              ],
+              "raw": "{{baseUrl}}/favorites/lists"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "My lists",
+          "request": {
+            "description": "Hakee kirjautuneen käyttäjän omat suosikkilistat (ilman elokuvia), uusin ensin.\n\n**Kirjautuminen:** Vaaditaan (`Authorization: Bearer` )\n\n**Vastaukset:**\n\n- `200` Lista suosikkilistoista (`id`, `user_id`, `name`, `created_at`)\n    \n- `401` Token puuttuu tai on virheellinen\n    \n- `500` Palvelinvirhe",
+            "header": [],
+            "method": "GET",
+            "url": {
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "favorites",
+                "lists",
+                "me"
+              ],
+              "raw": "{{baseUrl}}/favorites/lists/me"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get list (julkinen, jaettava linkki)",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Hakee yhden suosikkilistan ja sen elokuvat. Reitti on julkinen, joten sillä toimii listan jakaminen linkkinä.\n\n**Kirjautuminen:** Ei vaadita\n\n**Polkuparametri:**\n\n- `id`: suosikkilistan ID\n    \n\n**Vastaukset:**\n\n- `200` Palauttaa listan tiedot (`id`, `user_id`, `name`, `created_at`) sekä `movies`\\-listan, jossa jokaisella `movie_id` ja `added_at`. Elokuvien tarkat tiedot haetaan reitillä `GET /movies/:id`.\n    \n- `404` Listaa ei löytynyt\n    \n- `500` Palvelinvirhe",
+            "header": [],
+            "method": "GET",
+            "url": {
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "favorites",
+                "lists",
+                "{{listId}}"
+              ],
+              "raw": "{{baseUrl}}/favorites/lists/{{listId}}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add movie",
+          "request": {
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\"movie_id\":550}"
+            },
+            "description": "Lisää elokuvan suosikkilistalle. Vain listan omistaja voi lisätä.\n\n**Kirjautuminen:** Vaaditaan (`Authorization: Bearer` )\n\n**Polkuparametri:**\n\n- `id`: suosikkilistan ID\n    \n\n**Body (JSON):**\n\n- `movie_id` (pakollinen): elokuvan TMDB-ID\n    \n\n**Vastaukset:**\n\n- `201` Elokuva lisätty. Jos elokuva oli jo listalla, palauttaa `message`: \"Elokuva on jo listalla\"\n    \n- `401` Token puuttuu tai on virheellinen\n    \n- `403` Lista ei ole kirjautuneen käyttäjän\n    \n- `500` Palvelinvirhe",
+            "header": [],
+            "method": "POST",
+            "url": {
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "favorites",
+                "lists",
+                "{{listId}}",
+                "movies"
+              ],
+              "raw": "{{baseUrl}}/favorites/lists/{{listId}}/movies"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove movie",
+          "request": {
+            "description": "Poistaa elokuvan suosikkilistalta. Vain listan omistaja voi poistaa.\n\n**Kirjautuminen:** Vaaditaan (`Authorization: Bearer` )\n\n**Polkuparametrit:**\n\n- `id`: suosikkilistan ID\n    \n- `movieId`: elokuvan TMDB-ID\n    \n\n**Vastaukset:**\n\n- `200` Elokuva poistettu listalta (`status`: \"ok\")\n    \n- `401` Token puuttuu tai on virheellinen\n    \n- `403` Lista ei ole kirjautuneen käyttäjän\n    \n- `500` Palvelinvirhe",
+            "header": [],
+            "method": "DELETE",
+            "url": {
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "favorites",
+                "lists",
+                "{{listId}}",
+                "movies",
+                "550"
+              ],
+              "raw": "{{baseUrl}}/favorites/lists/{{listId}}/movies/550"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete list",
+          "request": {
+            "description": "Poistaa koko suosikkilistan elokuvineen. Vain listan omistaja voi poistaa.\n\n**Kirjautuminen:** Vaaditaan (`Authorization: Bearer` )\n\n**Polkuparametri:**\n\n- `id`: suosikkilistan ID\n    \n\n**Vastaukset:**\n\n- `200` Lista poistettu (`status`: \"ok\")\n    \n- `401` Token puuttuu tai on virheellinen\n    \n- `403` Lista ei ole kirjautuneen käyttäjän\n    \n- `500` Palvelinvirhe",
+            "header": [],
+            "method": "DELETE",
+            "url": {
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "favorites",
+                "lists",
+                "{{listId}}"
+              ],
+              "raw": "{{baseUrl}}/favorites/lists/{{listId}}"
+            }
+          },
+          "response": []
+        }
+      ],
+      "name": "Favorites"
+    },
+    {
+      "item": [
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "name": "Get all groups",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Hakee kaikki sivuston ryhmät. Lista näkyy kaikille, mutta ryhmän tarkempi sisältö näkyy vain jäsenille.\n\n**Kirjautuminen:** Ei vaadita\n\n**Vastaukset:**\n\n- `200` Lista ryhmistä. Jokaisella `id` ja `name`\n    \n- `500` Palvelinvirhe",
+            "header": [],
+            "method": "GET",
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "name": "Get group",
+          "request": {
+            "description": "Hakee yhden ryhmän tiedot. Vain ryhmän jäsenet näkevät ryhmän tarkemman sisällön.\n\n**Kirjautuminen:** Vaaditaan (`Authorization: Bearer` )\n\n**Polkuparametri:**\n\n- `id`: ryhmän ID\n    \n\n**Vastaukset:**\n\n- `200` Palauttaa ryhmän tiedot (`id`, `name`, `owner_id`)\n    \n- `401` Token puuttuu tai on virheellinen\n    \n- `403` Käyttäjä ei ole ryhmän jäsen\n    \n- `404` Ryhmää ei löytynyt\n    \n- `500` Palvelinvirhe",
+            "header": [],
+            "method": "GET",
+            "url": {
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "groups",
+                "{{groupId}}"
+              ],
+              "raw": "{{baseUrl}}/groups/{{groupId}}"
+            }
+          },
+          "response": []
+        },
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201\", () => pm.response.to.have.status(201));\r\npm.environment.set(\"groupId\", pm.response.json().id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "name": "Create group",
+          "request": {
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\"name\":\"Marvel-fanit\"}"
+            },
+            "description": "Luo uuden ryhmän. Luoja on ryhmän omistaja.\n\n**Kirjautuminen:** Vaaditaan (`Authorization: Bearer` )\n\n**Body (JSON):**\n\n- `name` (pakollinen): ryhmän nimi\n    \n\n**Vastaukset:**\n\n- `201` Ryhmä luotu. Palauttaa `id`, `name`, `owner_id`\n    \n- `400` Ryhmän nimi puuttuu\n    \n- `401` Token puuttuu tai on virheellinen\n    \n- `500` Palvelinvirhe",
+            "header": [],
+            "method": "POST",
+            "url": {
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "groups"
+              ],
+              "raw": "{{baseUrl}}/groups"
+            }
+          },
+          "response": []
+        },
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "name": "Delete group",
+          "request": {
+            "description": "Poistaa ryhmän. Vain ryhmän omistaja voi poistaa.\n\n**Kirjautuminen:** Vaaditaan (`Authorization: Bearer` )\n\n**Polkuparametri:**\n\n- `id`: ryhmän ID\n    \n\n**Vastaukset:**\n\n- `200` Ryhmä poistettu (`status`: \"ok\")\n    \n- `401` Token puuttuu tai on virheellinen\n    \n- `403` Käyttäjä ei ole ryhmän omistaja\n    \n- `404` Ryhmää ei löytynyt\n    \n- `500` Palvelinvirhe",
+            "header": [],
+            "method": "DELETE",
+            "url": {
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "groups",
+                "{{groupId}}"
+              ],
+              "raw": "{{baseUrl}}/groups/{{groupId}}"
+            }
+          },
+          "response": []
+        }
+      ],
+      "name": "Groups"
+    },
+    {
+      "item": [
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "name": "Join group",
+          "request": {
+            "description": "Lisää kirjautuneen käyttäjän ryhmän jäseneksi.\n\n**Kirjautuminen:** Vaaditaan (`Authorization: Bearer` )\n\n**Polkuparametri:**\n\n- `id`: ryhmän ID\n    \n\n**Vastaukset:**\n\n- `200` tai `201` Käyttäjä liitetty ryhmään. Palauttaa `group_id` ja `user_id`\n    \n- `401` Token puuttuu tai on virheellinen\n    \n- `404` Ryhmää ei löytynyt\n    \n- `409` Käyttäjä on jo ryhmän jäsen\n    \n- `500` Palvelinvirhe",
+            "header": [],
+            "method": "POST",
+            "url": {
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "groups",
+                "{{groupId}}",
+                "join"
+              ],
+              "raw": "{{baseUrl}}/groups/{{groupId}}/join"
+            }
+          },
+          "response": []
+        },
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "name": "Get members",
+          "request": {
+            "description": "Hakee ryhmän jäsenet.\n\n**Kirjautuminen:** Vaaditaan (`Authorization: Bearer` )\n\n**Polkuparametri:**\n\n- `id`: ryhmän ID\n    \n\n**Vastaukset:**\n\n- `200` Lista jäsenistä. Jokaisella `user_id` ja `email`\n    \n- `401` Token puuttuu tai on virheellinen\n    \n- `403` Käyttäjä ei ole ryhmän jäsen\n    \n- `500` Palvelinvirhe",
+            "header": [],
+            "method": "GET",
+            "url": {
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "groups",
+                "{{groupId}}",
+                "members"
+              ],
+              "raw": "{{baseUrl}}/groups/{{groupId}}/members"
+            }
+          },
+          "response": []
+        },
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "name": "Remove member",
+          "request": {
+            "description": "Poistaa jäsenen ryhmästä. Ryhmän omistaja voi poistaa kenet tahansa jäsenen, ja jäsen voi poistaa itsensä (poistuminen ryhmästä).\n\n**Kirjautuminen:** Vaaditaan (`Authorization: Bearer` )\n\n**Polkuparametrit:**\n\n- `groupId`: ryhmän ID\n    \n- `userId`: poistettavan käyttäjän ID\n    \n\n**Vastaukset:**\n\n- `200` Jäsen poistettu (`status`: \"ok\")\n    \n- `401` Token puuttuu tai on virheellinen\n    \n- `403` Ei oikeutta poistaa (ei omistaja eikä kyseinen jäsen)\n    \n- `404` Ryhmää tai jäsentä ei löytynyt\n    \n- `500` Palvelinvirhe",
+            "header": [],
+            "method": "DELETE",
+            "url": {
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "groups",
+                "{{groupId}}",
+                "members",
+                "{{userId2}}"
+              ],
+              "raw": "{{baseUrl}}/groups/{{groupId}}/members/{{userId2}}"
+            }
+          },
+          "response": []
+        }
+      ],
+      "name": "Members"
+    },
+    {
+      "item": [
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "name": "Send request",
+          "request": {
+            "auth": {
+              "bearer": [
+                {
+                  "key": "token",
+                  "type": "string",
+                  "value": "{{token2}}"
+                }
+              ],
+              "type": "bearer"
+            },
+            "description": "Lähettää liittymispyynnön ryhmään. Ryhmän omistaja hyväksyy tai hylkää pyynnön.\n\n**Kirjautuminen:** Vaaditaan (`Authorization: Bearer` )\n\n**Polkuparametri:**\n\n- `id`: ryhmän ID\n    \n\n**Vastaukset:**\n\n- `201` Pyyntö lähetetty. Palauttaa `status`: \"pending\"\n    \n- `401` Token puuttuu tai on virheellinen\n    \n- `404` Ryhmää ei löytynyt\n    \n- `409` Pyyntö on jo lähetetty tai käyttäjä on jo jäsen\n    \n- `500` Palvelinvirhe",
+            "header": [],
+            "method": "POST",
+            "url": {
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "groups",
+                "{{groupId}}",
+                "request"
+              ],
+              "raw": "{{baseUrl}}/groups/{{groupId}}/request"
+            }
+          },
+          "response": []
+        },
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const list = pm.response.json();\r\nif (list.length > 0) pm.environment.set(\"requestId\", list[0].id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "name": "Get requests",
+          "request": {
+            "description": "Hakee ryhmän liittymispyynnöt. Vain ryhmän omistaja näkee ne.\n\n**Kirjautuminen:** Vaaditaan (`Authorization: Bearer` )\n\n**Polkuparametri:**\n\n- `id`: ryhmän ID\n    \n\n**Vastaukset:**\n\n- `200` Lista pyynnöistä. Jokaisella `id`, `email` ja `status` (pending, approved tai rejected)\n    \n- `401` Token puuttuu tai on virheellinen\n    \n- `403` Käyttäjä ei ole ryhmän omistaja\n    \n- `500` Palvelinvirhe",
+            "header": [],
+            "method": "GET",
+            "url": {
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "groups",
+                "{{groupId}}",
+                "requests"
+              ],
+              "raw": "{{baseUrl}}/groups/{{groupId}}/requests"
+            }
+          },
+          "response": []
+        },
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "name": "Approve",
+          "request": {
+            "description": "Hyväksyy liittymispyynnön, jolloin pyytäjä liitetään ryhmään. Vain ryhmän omistaja voi hyväksyä.\n\n**Kirjautuminen:** Vaaditaan (`Authorization: Bearer` )\n\n**Polkuparametri:**\n\n- `id`: liittymispyynnön ID (saatavilla reitiltä `GET /groups/:id/requests`)\n    \n\n**Vastaukset:**\n\n- `200` Pyyntö hyväksytty. Palauttaa `status`: \"approved\"\n    \n- `401` Token puuttuu tai on virheellinen\n    \n- `403` Käyttäjä ei ole ryhmän omistaja\n    \n- `404` Pyyntöä ei löytynyt\n    \n- `500` Palvelinvirhe",
+            "header": [],
+            "method": "PATCH",
+            "url": {
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "requests",
+                "{{requestId}}",
+                "approve"
+              ],
+              "raw": "{{baseUrl}}/requests/{{requestId}}/approve"
+            }
+          },
+          "response": []
+        },
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "name": "Reject",
+          "request": {
+            "description": "Hylkää liittymispyynnön. Vain ryhmän omistaja voi hylätä.\n\n**Kirjautuminen:** Vaaditaan (`Authorization: Bearer` )\n\n**Polkuparametri:**\n\n- `id`: liittymispyynnön ID (saatavilla reitiltä `GET /groups/:id/requests`)\n    \n\n**Vastaukset:**\n\n- `200` Pyyntö hylätty. Palauttaa `status`: \"rejected\"\n    \n- `401` Token puuttuu tai on virheellinen\n    \n- `403` Käyttäjä ei ole ryhmän omistaja\n    \n- `404` Pyyntöä ei löytynyt\n    \n- `500` Palvelinvirhe",
+            "header": [],
+            "method": "PATCH",
+            "url": {
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "requests",
+                "{{requestId}}",
+                "reject"
+              ],
+              "raw": "{{baseUrl}}/requests/{{requestId}}/reject"
+            }
+          },
+          "response": []
+        }
+      ],
+      "name": "Join requests"
+    }
+  ]
+}
