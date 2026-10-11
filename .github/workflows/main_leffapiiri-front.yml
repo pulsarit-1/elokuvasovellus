@@ -7,6 +7,9 @@ on:
   push:
     branches:
       - 'main'
+    paths:
+      - 'client/**' # Käynnistyy vain kun frontend-koodia muutetaan
+      - '.github/workflows/main_leffapiiri-front.yml' # ...tai tätä workflowta itseään
   workflow_dispatch:
 
 jobs:
@@ -15,17 +18,27 @@ jobs:
     permissions:
       contents: read #This is required for actions/checkout
 
+    defaults:
+      run:
+        working-directory: client # Frontendin koodi on client-kansiossa
+
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up Node.js version
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '24.x'
+          cache: 'npm'
+          cache-dependency-path: client/package-lock.json
 
       - name: npm install, build, and test
+        env:
+          # Backendin osoite, joka leivotaan buildiin. Asetetaan GitHubissa:
+          # Settings -> Secrets and variables -> Actions -> Variables
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
         run: |
-          npm install
+          npm ci
           npm run build --if-present
           npm run test --if-present
 
@@ -33,7 +46,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: .
+          path: client/dist # Vain valmis build, ei lähdekoodia
 
   deploy:
     runs-on: ubuntu-latest
@@ -47,7 +60,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: node-app
-      
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -62,4 +75,3 @@ jobs:
           app-name: 'Leffapiiri-Front'
           slot-name: 'Production'
           package: .
-          
