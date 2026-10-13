@@ -10,6 +10,19 @@ function authHeaders() {
   };
 }
 
+// Daniilin rivi: TMDB:n arvostelut voivat olla todella pitkiä, joten näytetään vain alku (max 400 merkkiä).
+// Leikkaus tehdään viimeisen välilyönnin kohdalta, ettei sana katkea kesken
+const MAX_TMDB_REVIEW_LENGTH = 400;
+
+function shorten(text) {
+  if (!text || text.length <= MAX_TMDB_REVIEW_LENGTH) return text;
+
+  const cut = text.slice(0, MAX_TMDB_REVIEW_LENGTH);
+  const lastSpace = cut.lastIndexOf(' ');
+
+  return `${(lastSpace > 0 ? cut.slice(0, lastSpace) : cut).trimEnd()}…`;
+}
+
 // Näytetään vain kirjautuneelle: valitaan oma lista, lisätään tai poistetaan elokuva
 function AddToList({ movieId, onChanged }) {
   const [lists, setLists] = useState([]);
@@ -253,7 +266,7 @@ function MovieDetails({ movieId, user, onClose, onFavoritesChanged }) {
                       )}
                     </div>
 
-                    <p>{review.content}</p>
+                    <p>{shorten(review.content)}</p>
                   </article>
                 ))
               )}
