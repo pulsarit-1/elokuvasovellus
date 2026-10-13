@@ -178,3 +178,124 @@
     width: 160px;
   }
 }
+
+/* Daniilin rivi: Leffapiirin omat arvostelut: tähtinäyttö, tähtivalitsin, lomake ja kommentit */
+.review-section {
+  margin-bottom: 28px;
+  padding-bottom: 8px;
+}
+
+.review-summary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  margin-bottom: 14px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.stars {
+  display: inline-flex;
+  gap: 2px;
+  white-space: nowrap;
+}
+
+/* .stars-etuliite, ettei .review-header span -sääntö ylikirjoita tähtien värejä */
+.stars .star {
+  color: #4a4238;
+  font-size: 16px;
+}
+
+.stars .star--on {
+  color: var(--accent);
+}
+
+.star-picker {
+  display: flex;
+  gap: 4px;
+}
+
+.star-button {
+  padding: 0;
+
+  border: none;
+  background: none;
+
+  color: #4a4238;
+  font-size: 30px;
+  line-height: 1;
+
+  cursor: pointer;
+  transition: transform 0.1s ease, color 0.1s ease;
+}
+
+.star-button--on {
+  color: var(--accent);
+}
+
+.star-button:hover:not(:disabled) {
+  transform: scale(1.15);
+}
+
+.star-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.star-button:disabled {
+  cursor: default;
+}
+
+.review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  margin-bottom: 18px;
+}
+
+.review-form textarea {
+  width: 100%;
+  padding: 11px 12px;
+
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1.5;
+
+  resize: vertical;
+}
+
+.review-form textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(217, 164, 65, 0.15);
+}
+
+.review-form-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.review-message {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.review-date {
+  display: block;
+  margin-top: 6px;
+
+  color: var(--text-muted);
+  font-size: 12px;
+}
