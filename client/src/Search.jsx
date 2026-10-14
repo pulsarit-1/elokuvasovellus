@@ -133,10 +133,22 @@ function Search({ user, onBackHome }) {
 
       {error && <p className="search-error">{error}</p>}
 
-      {searched && movies.length === 0 && !error && <p>Ei tuloksia.</p>}
+      {/* Daniilin rivi: sama viesti kuin etusivun MovieGrid:ssä, kun haku ei löydä mitään */}
+      {searched && !loading && movies.length === 0 && !error && (
+        <p className="movie-message">Elokuvia ei löytynyt.</p>
+      )}
 
       <div className="movie-grid">
-        {movies.map((movie) => (
+        {/* Daniilin rivi: latauksen aikana harmaita korttipohjia (kuten etusivulla), ettei ruutu ole tyhjä */}
+        {loading &&
+          Array.from({ length: 10 }).map((_, index) => (
+            <div key={index} className="movie-card skeleton">
+              <div className="movie-poster" />
+              <div className="skeleton-line" />
+            </div>
+          ))}
+
+        {!loading && movies.map((movie) => (
         //Jenni: kortti on nyt klikattava
           <div
             key={movie.id}
@@ -151,9 +163,16 @@ function Search({ user, onBackHome }) {
             }}
           >
             <div className="movie-poster gradient-2">
-              {/* Daniilin rivi: movie.poster_path -> movie.poster, backend palauttaa nyt valmiin kuva-URL:n */}
-              {movie.poster && (
-                <img src={movie.poster} alt={movie.title} />
+              {/* Daniilin rivi: movie.poster_path -> movie.poster, backend palauttaa nyt valmiin kuva-URL:n.
+                  Jos kuvaa ei ole, näytetään etusivun tapaan "Ei kuvaa" -varakuva */}
+              {movie.poster ? (
+                <img
+                  className="movie-poster-img"
+                  src={movie.poster}
+                  alt={movie.title}
+                />
+              ) : (
+                <div className="movie-poster-placeholder">Ei kuvaa</div>
               )}
               <span className="movie-rating">★ {movie.rating}</span> {/* Daniilin rivi: movie.vote_average.toFixed(1) -> movie.rating */}
             </div>
