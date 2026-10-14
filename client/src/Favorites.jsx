@@ -30,6 +30,9 @@ function Favorites({ user, onBackHome }) {
   const [error, setError] = useState('');
   // jenni: avatun elokuvan TMDB ID
   const [selectedMovieId, setSelectedMovieId] = useState(null);
+  // Daniilin rivi: listan jakolinkki ja viesti linkin kopioinnista
+  const [shareLink, setShareLink] = useState('');
+  const [shareMessage, setShareMessage] = useState('');
   // Haetaan omat listat, kun sivu avataan
   useEffect(() => {
     const loadLists = async () => {
@@ -71,6 +74,8 @@ function Favorites({ user, onBackHome }) {
   // Avataan lista ja haetaan sen elokuvien tiedot
   const openList = async (list) => {
     setSelectedList(list);
+    setShareLink(''); // Daniilin rivi: uuden listan jakolinkki tyhjennetään
+    setShareMessage('');
     setMovies([]);
     setMoviesLoading(true);
 
@@ -121,6 +126,21 @@ function Favorites({ user, onBackHome }) {
       setError('Listan poistaminen epäonnistui');
     }
   };
+  // Daniilin rivi: luodaan avatun listan jakolinkki (?list=ID) ja kopioidaan se leikepöydälle.
+  // Linkin avaaminen vaatii kirjautumisen
+  const handleShare = async () => {
+    const link = `${window.location.origin}${window.location.pathname}?list=${selectedList.id}`;
+    setShareLink(link);
+
+    try {
+      await navigator.clipboard.writeText(link);
+      setShareMessage('Linkki kopioitu leikepöydälle!');
+    } catch (err) {
+      // Jos selain ei salli kopiointia, käyttäjä voi kopioida linkin kentästä itse
+      setShareMessage('Kopioi linkki alta:');
+    }
+  };
+
   // Jenni: modaali näytetään yksittäinen lista sekä kaikki listat näkymässä
   const movieModal = selectedMovieId && (
     <MovieDetails
@@ -146,14 +166,33 @@ function Favorites({ user, onBackHome }) {
 
         <div className="section-header">
           <h2>{selectedList.name}</h2>
-          <button
-            type="button"
-            className="btn btn-outline"
-            onClick={() => deleteList(selectedList)}
-          >
-            Poista lista
-          </button>
+          <div className="favorites-list-actions">
+            {/* Daniilin rivi: jaa lista linkkinä */}
+            <button type="button" className="btn btn-primary" onClick={handleShare}>
+              Jaa lista
+            </button>
+            <button
+              type="button"
+              className="btn btn-outline"
+              onClick={() => deleteList(selectedList)}
+            >
+              Poista lista
+            </button>
+          </div>
         </div>
+
+        {shareLink && (
+          <div className="share-box">
+            <p className="share-message">{shareMessage}</p>
+            <input
+              type="text"
+              className="share-link-input"
+              value={shareLink}
+              readOnly
+              onFocus={(event) => event.target.select()}
+            />
+          </div>
+        )}
 
         {error && <p className="favorites-error">{error}</p>}
 
