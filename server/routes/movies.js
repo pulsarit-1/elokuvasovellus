@@ -185,16 +185,30 @@ router.get('/:id', async (req, res) => {
     const { id } = req.params;
 
     // Haetaan TMDB:stä elokuvan tiedot ja arvostelut
-    const response = await axios.get(
-      `${TMDB_URL}/movie/${id}`,
-      {
-        params: {
-          api_key: process.env.TMDB_API_KEY,
-          language: 'fi-FI',
-          append_to_response: 'reviews'
+    // Daniilin rivi: arvostelut haetaan nyt erillisellä pyynnöllä englanniksi.
+    // Aiemmin (append_to_response + language fi-FI) TMDB palautti vain suomenkieliset
+    // arvostelut, joita on lähes olemattomasti, joten lista oli melkein aina tyhjä.
+    // Elokuvan tiedot haetaan edelleen suomeksi. Jos arvostelujen haku epäonnistuu,
+    // elokuva näytetään silti ilman arvosteluja (catch palauttaa null)
+    const [response, reviewsResponse] = await Promise.all([
+      axios.get(
+        `${TMDB_URL}/movie/${id}`,
+        {
+          params: {
+            api_key: process.env.TMDB_API_KEY,
+            language: 'fi-FI'
+          }
         }
-      }
-    );
+      ),
+      axios
+        .get(`${TMDB_URL}/movie/${id}/reviews`, {
+          params: {
+            api_key: process.env.TMDB_API_KEY,
+            language: 'en-US'
+          }
+        })
+        .catch(() => null)
+    ]);
 
     const movie = response.data;
 
@@ -226,8 +240,8 @@ router.get('/:id', async (req, res) => {
         : [],
 
       // Elokuvan arvostelut
-      reviews: movie.reviews?.results
-        ? movie.reviews.results.map((review) => ({
+      reviews: reviewsResponse?.data?.results
+        ? reviewsResponse.data.results.map((review) => ({
             id: review.id,
             author: review.author,
             content: review.content,
