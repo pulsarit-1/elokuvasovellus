@@ -2,7 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import './Auth.css';
 
-function Login({ onSwitchToRegister, onBackHome, onLoginSuccess }) {
+function Login({ onSwitchToRegister, onBackHome, onLoginSuccess, notice }) { // Daniilin rivi: notice = valinnainen ilmoitus
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -39,7 +39,8 @@ function Login({ onSwitchToRegister, onBackHome, onLoginSuccess }) {
         <form className="auth-card-body" onSubmit={handleSubmit}>
           <span className="auth-stub">LEFFAPIIRI</span>
           <h2 className="auth-heading">Kirjaudu sisään</h2>
-          <p className="auth-subtext">Tervetuloa takaisin.</p>
+          {/* Daniilin rivi: jaetun listan linkistä tullut käyttäjä näkee oman ilmoituksen */}
+          <p className="auth-subtext">{notice || 'Tervetuloa takaisin.'}</p>
 
           <label className="auth-field">
             <span className="auth-label">Sähköposti</span>

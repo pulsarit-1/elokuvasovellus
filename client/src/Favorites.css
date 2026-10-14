@@ -127,3 +127,44 @@
     flex-direction: column;
   }
 }
+
+/* Daniilin rivi: suosikkilistan jakaminen linkkinä */
+.favorites-list-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.share-box {
+  max-width: 560px;
+  margin-bottom: 20px;
+}
+
+.share-message {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.share-link-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px 12px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.share-link-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.shared-list-info {
+  margin: -8px 0 20px;
+  font-size: 14px;
+  color: var(--text-muted);
+}

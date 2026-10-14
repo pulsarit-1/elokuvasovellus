@@ -7,11 +7,23 @@ import Account from './Account';
 import Groups from './Groups';
 import GroupPage from './GroupPage';
 import Favorites from './Favorites';
+import SharedList from './SharedList'; // Daniilin rivi: jaetun suosikkilistan sivu
 
 function App() {
   const [view, setView] = useState('home');
-  const [user, setUser] = useState(null);
+  // Daniilin rivi: kirjautuminen luetaan heti localStoragesta, jotta jaetun linkin avaaja
+  // ei näe hetkeksi kirjautumissivua vaikka olisi jo kirjautunut
+  const [user, setUser] = useState(() => {
+    const token = localStorage.getItem('token');
+    const email = localStorage.getItem('userEmail');
+    return token && email ? { email } : null;
+  });
   const [selectedGroupId, setSelectedGroupId] = useState(null); // mikä ryhmä on auki
+
+  // Daniilin rivi: jos osoitteessa on ?list=ID, avataan jaettu suosikkilista.
+  // Lista näytetään vain kirjautuneelle käyttäjälle, muuten pyydetään ensin kirjautumaan
+  const sharedListId = new URLSearchParams(window.location.search).get('list');
+  const [sharedList, setSharedList] = useState(sharedListId);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -39,6 +51,37 @@ function App() {
     setUser(null);
     setView('home');
   };
+
+  // Daniilin rivi: jaettu lista näytetään ensimmäisenä. Takaisin-napilla linkin parametri
+  // poistetaan osoitteesta ja palataan etusivulle
+  if (sharedList) {
+    const leaveSharedList = () => {
+      window.history.replaceState({}, '', window.location.pathname);
+      setSharedList(null);
+      setView('home');
+    };
+
+    // Kirjautumaton käyttäjä ohjataan kirjautumaan. Kirjautumisen jälkeen lista aukeaa
+    if (!user) {
+      return view === 'register' ? (
+        <Register
+          onSwitchToLogin={() => setView('login')}
+          onBackHome={leaveSharedList}
+        />
+      ) : (
+        <Login
+          notice="Kirjaudu sisään nähdäksesi jaetun suosikkilistan."
+          onSwitchToRegister={() => setView('register')}
+          onBackHome={leaveSharedList}
+          onLoginSuccess={handleLoginSuccess}
+        />
+      );
+    }
+
+    return (
+      <SharedList listId={sharedList} user={user} onBackHome={leaveSharedList} />
+    );
+  }
 
   if (view === 'home') {
     return (
