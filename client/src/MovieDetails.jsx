@@ -152,6 +152,210 @@ function AddToList({ movieId, onChanged }) {
     </div>
   );
 }
+// Daniilin rivi: tähtinäyttö (vain luku). Arvo 0-5 pyöristetään lähimpään täyteen tähteen
+function Stars({ value }) {
+  const filled = Math.round(value);
+
+  return (
+    <span className="stars" role="img" aria-label={`${value} / 5 tähteä`}>
+      {[1, 2, 3, 4, 5].map((n) => (
+        <span key={n} className={n <= filled ? 'star star--on' : 'star'}>
+          ★
+        </span>
+      ))}
+    </span>
+  );
+}
+
+// Daniilin rivi: tähtien valinta arvostelulomakkeessa (1-5), klikkaus valitsee arvosanan
+function StarPicker({ value, onChange, disabled }) {
+  const [hover, setHover] = useState(0); // hiiri tähden päällä = esikatselu
+
+  return (
+    <div
+      className="star-picker"
+      role="radiogroup"
+      aria-label="Arvosana tähtinä"
+      onMouseLeave={() => setHover(0)}
+    >
+      {[1, 2, 3, 4, 5].map((n) => (
+        <button
+          key={n}
+          type="button"
+          role="radio"
+          aria-checked={value === n}
+          aria-label={`${n} tähteä`}
+          className={n <= (hover || value) ? 'star-button star-button--on' : 'star-button'}
+          onClick={() => onChange(n)}
+          onMouseEnter={() => setHover(n)}
+          disabled={disabled}
+        >
+          ★
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// Daniilin rivi: Leffapiirin omat arvostelut elokuvalle. Näyttää tähtikeskiarvon,
+// lomakkeen (vain kirjautuneelle) ja 5 uusinta arvostelua
+function ReviewSection({ movieId, user }) {
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  // Lomakkeen tila: valitut tähdet ja kommentti
+  const [rating, setRating] = useState(0);
+  const [text, setText] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [message, setMessage] = useState('');
+
+  // Haetaan elokuvan arvostelut (GET /api/reviews/:movieId), kun elokuva vaihtuu
+  useEffect(() => {
+    let cancelled = false; // estää vanhan vastauksen ylikirjoittamasta uutta
+
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/reviews/${movieId}`)
+      .then((response) => {
+        if (!cancelled) setReviews(response.data);
+      })
+      .catch(() => {
+        if (!cancelled) setError('Arvostelujen lataaminen epäonnistui');
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [movieId]);
+
+  // Keskiarvo kaikista arvosteluista (backend palauttaa uusimmat ensin)
+  const average = reviews.length
+    ? reviews.reduce((sum, review) => sum + Number(review.rating), 0) / reviews.length
+    : 0;
+
+  // Yksi arvostelu per käyttäjä: jos oma sähköposti on jo arvosteluissa, lomaketta ei näytetä
+  const alreadyReviewed = user && reviews.some((review) => review.email === user.email);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault(); // estää sivun uudelleenlatauksen
+
+    if (rating < 1) {
+      setMessage('Valitse ensin arvosana tähdillä');
+      return;
+    }
+    if (!text.trim()) {
+      setMessage('Kirjoita myös kommentti');
+      return;
+    }
+
+    setSubmitting(true);
+    setMessage('');
+
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/reviews`,
+        { movie_id: movieId, rating, review_text: text.trim() },
+        authHeaders()
+      );
+
+      // Uusi arvostelu listan alkuun heti, ilman uutta hakua (email tarvitaan nimen näyttöön)
+      setReviews([{ ...response.data, email: user.email }, ...reviews]);
+      setRating(0);
+      setText('');
+    } catch (err) {
+      setMessage(
+        err.response?.status === 401
+          ? 'Kirjautuminen vanhentunut, kirjaudu uudelleen'
+          : err.response?.data?.error || 'Arvostelun lähettäminen epäonnistui'
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="review-section">
+      <h3>Leffapiirin arvostelut</h3>
+
+      {/* Tähtikeskiarvo ja arvostelujen määrä */}
+      {!loading && !error && (
+        <div className="review-summary">
+          {reviews.length > 0 ? (
+            <>
+              <Stars value={average} />
+              <span>
+                {average.toFixed(1)} / 5 · {reviews.length}{' '}
+                {reviews.length === 1 ? 'arvostelu' : 'arvostelua'}
+              </span>
+            </>
+          ) : (
+            <span>Ei vielä arvosteluja. Ole ensimmäinen!</span>
+          )}
+        </div>
+      )}
+
+      {/* Lomake näkyy vain kirjautuneelle, joka ei ole vielä arvostellut tätä elokuvaa */}
+      {user && !alreadyReviewed && !loading && (
+        <form className="review-form" onSubmit={handleSubmit}>
+          <StarPicker value={rating} onChange={setRating} disabled={submitting} />
+
+          <textarea
+            value={text}
+            onChange={(event) => setText(event.target.value)}
+            placeholder="Kirjoita kommentti..."
+            rows={3}
+            maxLength={1000}
+            disabled={submitting}
+          />
+
+          <div className="review-form-actions">
+            <button type="submit" className="btn btn-primary" disabled={submitting}>
+              {submitting ? 'Lähetetään...' : 'Lähetä arvostelu'}
+            </button>
+            {message && <span className="review-message">{message}</span>}
+          </div>
+        </form>
+      )}
+
+      {user && alreadyReviewed && (
+        <p className="review-message">Olet jo arvostellut tämän elokuvan.</p>
+      )}
+
+      {!user && (
+        <p className="review-message">Kirjaudu sisään, jos haluat arvostella elokuvan.</p>
+      )}
+
+      {loading && <p className="movie-message">Ladataan arvosteluja...</p>}
+      {error && <p className="movie-message">{error}</p>}
+
+      {/* Näytetään vain 5 uusinta arvostelua */}
+      {reviews.slice(0, 5).map((review) => (
+        <article className="review" key={review.id}>
+          <div className="review-header">
+            {/* Nimeksi sähköpostin alkuosa, koko osoitetta ei näytetä muille */}
+            <strong>{review.email.split('@')[0]}</strong>
+            <Stars value={review.rating} />
+          </div>
+
+          <p>{review.review_text}</p>
+          <span className="review-date">
+            {new Date(review.created_at).toLocaleDateString('fi-FI')}
+          </span>
+        </article>
+      ))}
+
+      {reviews.length > 5 && (
+        <p className="review-message">
+          Näytetään 5 uusinta arvostelua (yhteensä {reviews.length}).
+        </p>
+      )}
+    </div>
+  );
+}
+
 // Ponnahdusikkuna, joka avautuu tietojen näyttämistä varten.
 // movieId: minkä elokuvan tiedot haetaan
 // onClose: käyttäjä haluaa sulkea modaalin
@@ -245,7 +449,11 @@ function MovieDetails({ movieId, user, onClose, onFavoritesChanged }) {
             </div>
 
             <div className="movie-modal-reviews">
-              <h3>Arvostelut</h3>
+              {/* Daniilin rivi: sovelluksen omat arvostelut tähtinä + lomake */}
+              <ReviewSection movieId={movie.id} user={user} />
+
+              {/* Daniilin rivi: otsikko tarkennettu, koska alla ovat TMDB:n arvostelut */}
+              <h3>Arvostelut TMDB:stä</h3>
 
               {movie.reviews?.length === 0 ? (
                 <p className="movie-message">

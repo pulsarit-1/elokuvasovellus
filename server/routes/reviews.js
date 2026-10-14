@@ -53,6 +53,36 @@ router.post('/', authMiddleware, async (req, res) => {
   }
 });
 
+// Daniilin rivi: kirjautuneen käyttäjän omat arvostelut (Oma tili -sivu).
+// Reitin pitää olla ennen '/:movieId'-reittiä, muuten 'me' tulkittaisiin elokuvan tunnukseksi
+router.get('/me', authMiddleware, async (req, res) => {
+  try {
+    const result = await pool.query(
+      `
+      SELECT
+        id,
+        movie_id,
+        rating,
+        review_text,
+        created_at
+      FROM reviews
+      WHERE user_id = $1
+      ORDER BY created_at DESC
+      `,
+      [req.user.userId]
+    );
+
+    res.json(result.rows);
+
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      error: 'Palvelinvirhe'
+    });
+  }
+});
+
 // Hae elokuvan arvostelut
 router.get('/:movieId', async (req, res) => {
   try {
